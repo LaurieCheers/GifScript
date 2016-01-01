@@ -362,6 +362,18 @@ namespace GifScript
             }
         }
 
+        public ColorRGB this[byte R, byte G, byte B]
+        {
+            get
+            {
+                return this[new ColorRGB(R, G, B)];
+            }
+            set
+            {
+                this[new ColorRGB(R, G, B)] = value;
+            }
+        }
+
         public bool FollowEdge(ColorRGB startPos, ColorDir startFacing, out ColorRGB endPos, out ColorDir endFacing)
         {
             return slices[startPos.B].FollowEdge(startPos, startFacing, out endPos, out endFacing);

@@ -19,29 +19,29 @@ using System.Text;
 
 namespace Jillzhang.GifUtility
 {
-    internal unsafe class OcTreeNode
+    public unsafe class OcTreeNode
     {
         private static int[] mask = new int[8] { 0x80, 0x40, 0x20, 0x10, 0x08, 0x04, 0x02, 0x01 };
         #region 公共属性
-        internal int ColorDepth;
-        internal int Level = 0;
-        internal bool Leaf = false;     
-        internal OcTreeNode[] Children;
+        public int ColorDepth;
+        public int Level = 0;
+        public bool Leaf = false;     
+        public OcTreeNode[] Children;
         /// <summary>
         /// 红色的数量
         /// </summary>
-        internal int Red = 0;
+        public int Red = 0;
         /// <summary>
         /// 绿色的数量
         /// </summary>
-        internal int Green = 0;
+        public int Green = 0;
         /// <summary>
         /// 蓝色的数量
         /// </summary>
-        internal int Blue = 0;
+        public int Blue = 0;
         //处理的颜色像素数量
-        internal int PixelCount = 0;
-        internal OcTreeNode NextReducible;
+        public int PixelCount = 0;
+        public OcTreeNode NextReducible;
         private int paletteIndex = 0;
         #endregion
 
@@ -52,7 +52,7 @@ namespace Jillzhang.GifUtility
         /// <param name="leaf">是否是叶子节点</param>
         /// <param name="level">层级</param>
         /// <param name="parent">父节点</param>
-        internal OcTreeNode(int colorDepth,int level,OcTree tree)
+        public OcTreeNode(int colorDepth,int level,OcTree tree)
         {
             this.ColorDepth = colorDepth;
             this.Leaf = (colorDepth==level);
@@ -70,7 +70,7 @@ namespace Jillzhang.GifUtility
         }
         #endregion   
     
-        internal void GetPalltte( List<Color32> palltte)
+        public void GetPalltte( List<Color32> palltte)
         {
             if (Leaf)
             {
@@ -94,7 +94,7 @@ namespace Jillzhang.GifUtility
                 }
             }         
         }
-        internal int Reduce()
+        public int Reduce()
         {
             Red = Green = Blue = 0;
             int childrenCount = 0;
@@ -113,7 +113,7 @@ namespace Jillzhang.GifUtility
             Leaf = true;
             return childrenCount - 1;
         }
-        internal void AddColor(Color32* pixel, int level,OcTree tree)
+        public void AddColor(Color32* pixel, int level,OcTree tree)
         {
             //如果是树叶了，表示一个颜色像素添加完成
             if (this.Leaf)
@@ -135,7 +135,7 @@ namespace Jillzhang.GifUtility
             child.AddColor(pixel, ++level,tree);            
         }
 
-        internal int GetPaletteIndex(Color32* pixel,int level)
+        public int GetPaletteIndex(Color32* pixel,int level)
         {
             int pindex = paletteIndex;
             if (!Leaf)
@@ -156,7 +156,7 @@ namespace Jillzhang.GifUtility
         }
 
 
-        internal void Increment(Color32* pixel)
+        public void Increment(Color32* pixel)
         {
             Red += pixel->Red;
             Green += pixel->Green;

@@ -35,7 +35,7 @@ using System.Collections;
 
 namespace Jillzhang.GifUtility
 {
-    internal class LZWEncoder
+    public class LZWEncoder
     {
         /// <summary>
         /// GIF规定编码最大为12bit，最大值即为4096
@@ -46,14 +46,14 @@ namespace Jillzhang.GifUtility
         byte initDataSize;
         byte[] indexedPixel;
 
-        internal LZWEncoder(byte[] indexedPixel, byte colorDepth)
+        public LZWEncoder(byte[] indexedPixel, byte colorDepth)
         {
             this.indexedPixel = indexedPixel;
             this.colorDepth = (byte)Math.Max((byte)2, colorDepth);
             initDataSize = this.colorDepth;
         }
 
-        internal void Encode(Stream os)
+        public void Encode(Stream os)
         {
             //是否是第一步
             bool first = true;

@@ -29,60 +29,60 @@ namespace Jillzhang.GifUtility
     /// 字符开始，定义紧接着它的图象的性质，包括图象相对于逻辑屏幕边界的偏移量、
     /// 图象大小以及有无局部颜色列表和颜色列表大小，由10个字节组成
     /// </summary>
-    internal class ImageDescriptor
+    public class ImageDescriptor
     {
         #region 结构字段      
 
         /// <summary>
         /// X方向偏移量
         /// </summary>
-        internal short XOffSet;
+        public short XOffSet;
 
         /// <summary>
         /// X方向偏移量
         /// </summary>
-        internal short YOffSet;
+        public short YOffSet;
 
         /// <summary>
         /// 图象宽度
         /// </summary>
-        internal short Width;
+        public short Width;
 
         /// <summary>
         /// 图象高度
         /// </summary>
-        internal short Height;     
+        public short Height;     
 
         /// <summary>
         /// packed
         /// </summary>
-        internal byte Packed;
+        public byte Packed;
 
         /// <summary>
         /// 局部颜色列表标志(Local Color Table Flag)
         /// 置位时标识紧接在图象标识符之后有一个局部颜色列表，供紧跟在它之后的一幅图象使用；
         /// 值否时使用全局颜色列表，忽略pixel值。
         /// </summary>
-        internal bool LctFlag;    
+        public bool LctFlag;    
 
         /// <summary>
         /// 交织标志(Interlace Flag)，置位时图象数据使用连续方式排列，否则使用顺序排列。
         /// </summary>
-        internal bool InterlaceFlag;
+        public bool InterlaceFlag;
 
         /// <summary>
         ///  分类标志(Sort Flag)，如果置位表示紧跟着的局部颜色列表分类排列.
         /// </summary>
-        internal bool SortFlag;
+        public bool SortFlag;
 
         /// <summary>
         ///  pixel - 局部颜色列表大小(Size of Local Color Table)，pixel+1就为颜色列表的位数
         /// </summary>
-        internal int LctSize;
+        public int LctSize;
         #endregion     
 
         #region 方法函数
-        internal byte[] GetBuffer()
+        public byte[] GetBuffer()
         {
             List<byte> list = new List<byte>();
             list.Add(GifExtensions.ImageDescriptorLabel);

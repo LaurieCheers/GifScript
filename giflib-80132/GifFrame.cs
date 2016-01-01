@@ -39,7 +39,7 @@ namespace Jillzhang.GifUtility
     /// <summary>
     /// Gif文件中可以包含多个图像，每个图像加上图像的一些特征，就组成了帧:GifFrame
     /// </summary>
-    internal class GifFrame
+    public class GifFrame
     {
         #region private fields
         private ImageDescriptor _imgDes;
@@ -50,7 +50,7 @@ namespace Jillzhang.GifUtility
         private byte[] _buffer;        
         #endregion
 
-        #region internal property
+        #region public property
         /// <summary>
         /// 该桢的背景色
         /// </summary>
@@ -70,16 +70,16 @@ namespace Jillzhang.GifUtility
         /// 定义紧接着它的图象的性质，包括图象相对于逻辑屏幕边界的偏移量、
         /// 图象大小以及有无局部颜色列表和颜色列表大小
         /// </summary>
-        internal ImageDescriptor ImageDescriptor
+        public ImageDescriptor ImageDescriptor
         {
             get { return _imgDes; }
             set { _imgDes = value; }
         }
-               
+
         /// <summary>
         /// Gif的调色板
         /// </summary>
-        internal Color32[] Palette
+        public Color32[] Palette
         {
             get
             {
@@ -95,16 +95,16 @@ namespace Jillzhang.GifUtility
         /// <summary>
         /// 图像
         /// </summary>
-        internal System.Drawing.Bitmap Image
+        public System.Drawing.Bitmap Image
         {
             get { return _img; }
             set { _img = value; }
         }
-        
+
         /// <summary>
         /// 数据位大小
         /// </summary>
-        internal int ColorDepth
+        public int ColorDepth
         {
             get
             {
@@ -124,7 +124,7 @@ namespace Jillzhang.GifUtility
         /// 也没有提供局部颜色列表，可以自己创建一个颜色列表，或使用系统的颜色列表。
         /// RGBRGB......
         /// </summary>
-        internal byte[] LocalColorTable
+        public byte[] LocalColorTable
         {
             get { return _lct; }
             set { _lct = value; }
@@ -135,7 +135,7 @@ namespace Jillzhang.GifUtility
         /// 可以放在一个图象块(包括图象标识符、局部颜色列表和图象数据)或文本扩展块的前面，
         /// 用来控制跟在它后面的第一个图象（或文本）的渲染(Render)形式
         /// </summary>
-        internal GraphicEx GraphicExtension
+        public GraphicEx GraphicExtension
         {
             get { return _graphicEx; }
             set { _graphicEx = value; }
@@ -144,16 +144,16 @@ namespace Jillzhang.GifUtility
         /// <summary>
         /// 延迟-与下一帧之间的时间间隔
         /// </summary>
-        internal short Delay
+        public short Delay
         {
             get { return _graphicEx.Delay; }
             set { _graphicEx.Delay = value; }
         }
-       
+
         /// <summary>
         /// 这个是经过LZW压缩算法后的数据流
         /// </summary>
-        internal byte[] IndexedPixel
+        public byte[] IndexedPixel
         {
             get { return _buffer; }
             set { _buffer = value; }

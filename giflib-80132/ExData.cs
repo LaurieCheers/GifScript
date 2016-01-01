@@ -31,18 +31,18 @@ using System.Text;
 
 namespace Jillzhang.GifUtility
 {
-    internal  class ExData
+    public  class ExData
     {
         private static readonly byte _extensionIntroducer = 0x21;
         private static readonly byte _blockTerminator = 0;
-        internal byte ExtensionIntroducer
+        public byte ExtensionIntroducer
         {
             get
             {
                 return _extensionIntroducer;
             }
         }
-        internal byte BlockTerminator
+        public byte BlockTerminator
         {
             get
             {

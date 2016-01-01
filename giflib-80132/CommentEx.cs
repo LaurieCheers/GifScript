@@ -43,18 +43,18 @@ namespace Jillzhang.GifUtility
     /// 的纯文本数据(7-bit ASCII字符)，注释扩展并不影响对图象数据流的处理，解码器完全可以忽
     /// 略它。存放位置可以是数据流的任何地方，最好不要妨碍控制和数据块，推荐放在数据流的开始或结尾
     /// </summary>
-    internal struct CommentEx
+    public struct CommentEx
     {
 
         #region 结构字段  
         /// <summary>
         /// Comment Data - 一个或多个数据块组成
         /// </summary>
-        internal List<string> CommentDatas;
+        public List<string> CommentDatas;
         #endregion
 
         #region 方法函数
-        internal byte[] GetBuffer()
+        public byte[] GetBuffer()
         {            
             List<byte> list = new List<byte>();
             list.Add(GifExtensions.ExtensionIntroducer);

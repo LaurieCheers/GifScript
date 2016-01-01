@@ -42,7 +42,7 @@ namespace Jillzhang.GifUtility
     /// <summary>
     /// Gif编码器GifEncoder
     /// </summary>
-    internal class GifEncoder
+    public class GifEncoder
     {
         #region private fileds      
         byte[] gct;
@@ -84,11 +84,11 @@ namespace Jillzhang.GifUtility
             streamHelper.WriteBytes(new byte[] { 0x3B });
         }
 
-        internal static void Encode(GifImage gifImage, string gifPath)
+        public static void Encode(GifImage gifImage, string gifPath)
         {
             FileStream fs = null;
-            try
-            {
+//            try
+//            {
                 fs = new FileStream(gifPath, FileMode.Create);
                 StreamHelper streamHelper = new StreamHelper(fs);
                 streamHelper.WriteHeader(gifImage.Header);
@@ -100,18 +100,18 @@ namespace Jillzhang.GifUtility
                 streamHelper.SetApplicationExtensions(gifImage.ApplictionExtensions);
                 streamHelper.SetCommentExtensions(gifImage.CommentExtensions);
                 SetFrames(gifImage.Frames, streamHelper, fs);
-            }
+/*            }
             catch
             {
                 throw;
             }
             finally
-            {
+            {*/
                 if (fs != null)
                 {
                     fs.Close();
                 }
-            }
+//            }
         }
 
         static Hashtable GetColotTable(byte[] table, int transIndex)

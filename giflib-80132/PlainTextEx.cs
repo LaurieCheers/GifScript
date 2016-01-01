@@ -46,7 +46,7 @@ namespace Jillzhang.GifUtility
     /// 没有则可以使用一个已经保存的前一个颜色列表。另外，图形文本扩展块也属于图形块
     /// (Graphic Rendering Block)，可以在它前面定义图形控制扩展对它的表现形式进一步修改。
     /// </summary>
-    internal struct PlainTextEx
+    public struct PlainTextEx
     {
 
         #region 结构字段       
@@ -54,57 +54,57 @@ namespace Jillzhang.GifUtility
         /// <summary>
         /// Block Size - 块大小，固定值12
         /// </summary>
-        internal static readonly byte BlockSize = 0X0C;
+        public static readonly byte BlockSize = 0X0C;
 
         /// <summary>
         /// Text Glid Left Posotion - 像素值，文本框离逻辑屏幕的左边界距
         /// </summary>
-        internal short XOffSet;
+        public short XOffSet;
 
         /// <summary>
         /// Text Glid Top Posotion - 像素值，文本框离逻辑屏幕的上边界距离
         /// </summary>
-        internal short YOffSet;
+        public short YOffSet;
 
         /// <summary>
         /// 文本框高度 Text Glid Width -像素值
         /// </summary>
-        internal short Width;
+        public short Width;
 
         /// <summary>
         /// 文本框高度 Text Glid Height - 像素值
         /// </summary>
-        internal short Height;
+        public short Height;
 
         /// <summary>
         /// 字符单元格宽度 Character Cell Width - 像素值，单个单元格宽度
         /// </summary>
-        internal byte CharacterCellWidth;
+        public byte CharacterCellWidth;
 
         /// <summary>
         /// 字符单元格高度 Character Cell Height- 像素值，单个单元格高度
         /// </summary>
-        internal byte CharacterCellHeight;
+        public byte CharacterCellHeight;
 
         /// <summary>
         /// 文本前景色索引 Text Foreground Color Index - 前景色在全局颜色列表中的索引
         /// </summary>
-        internal byte ForegroundColorIndex;
+        public byte ForegroundColorIndex;
 
         /// <summary>
         /// 文本背景色索引 Text Blackground Color Index - 背景色在全局颜色列表中的索引
         /// </summary>
-        internal byte BgColorIndex;
+        public byte BgColorIndex;
 
           /// <summary>
         /// 文本数据块集合Plain Text Data - 一个或多个数据块(Data Sub-Blocks)组成，保存要在显示的字符串。
         /// </summary>
-        internal List<string> TextDatas;
+        public List<string> TextDatas;
   
        #endregion    
 
         #region 方法函数
-        internal byte[] GetBuffer()
+        public byte[] GetBuffer()
         {
             List<byte> list = new List<byte>();
             list.Add(GifExtensions.ExtensionIntroducer);

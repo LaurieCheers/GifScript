@@ -22,7 +22,7 @@ namespace Jillzhang.GifUtility
     /// <summary>
     /// 八叉树
     /// </summary>
-    internal unsafe class OcTree
+    public unsafe class OcTree
    {
        #region 私有字段
        OcTreeNode _rootNode;
@@ -31,10 +31,10 @@ namespace Jillzhang.GifUtility
        int _colorDepth = 8;
        int _maxColors = 0;
        int leaves = 0;
-       internal OcTreeNode[] ReducibleNodes;
+       public OcTreeNode[] ReducibleNodes;
        #endregion
 
-       internal OcTree(int colorDepth)
+       public OcTree(int colorDepth)
        {
            this._colorDepth = colorDepth;
            _maxColors = 1<<_colorDepth;
@@ -42,17 +42,17 @@ namespace Jillzhang.GifUtility
            _rootNode = new OcTreeNode(colorDepth, 0, this);         
        }
 
-       internal void TracePrevious(OcTreeNode node)
+       public void TracePrevious(OcTreeNode node)
        {
            this._prefixNode = node;
        }
 
-       internal void IncrementLeaves()
+       public void IncrementLeaves()
        {
            leaves++;
        }
 
-       internal Color32[] Pallette()
+       public Color32[] Pallette()
        {
            while(leaves>_maxColors)
            {
@@ -76,12 +76,12 @@ namespace Jillzhang.GifUtility
            _prefixNode = null;
        }
 
-       internal int GetPaletteIndex(Color32* pixel)
+       public int GetPaletteIndex(Color32* pixel)
        {
            return _rootNode.GetPaletteIndex(pixel, 0);
        }
 
-       internal void AddColor(Color32* pixel)
+       public void AddColor(Color32* pixel)
        {
            //如果当前处理颜色与前一个颜色相同
            if (_prefixColor == pixel->ARGB)

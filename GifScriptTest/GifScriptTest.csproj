@@ -34,6 +34,7 @@
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Drawing" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -52,6 +53,10 @@
     <ProjectReference Include="..\giflib-80132\GifUtility.csproj">
       <Project>{cfdcacd9-33af-499c-a9f5-6e6bd1dbac35}</Project>
       <Name>GifUtility</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\GifScript\GifScript.csproj">
+      <Project>{bdefc1c6-8868-4abc-bd51-a3fd22092c85}</Project>
+      <Name>GifScript</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

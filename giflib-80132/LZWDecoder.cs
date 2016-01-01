@@ -44,7 +44,7 @@ namespace Jillzhang.GifUtility
     /// <summary>
     /// Gif 使用的可变长度的LZW压缩算法解码器
     /// </summary>
-    internal class LZWDecoder
+    public class LZWDecoder
     {
         /// <summary>
         /// GIF规定编码最大为12bit，最大值即为4096
@@ -55,7 +55,7 @@ namespace Jillzhang.GifUtility
         /// 构造函数
         /// </summary>
         /// <param name="stream"></param>
-        internal LZWDecoder(Stream stream)
+        public LZWDecoder(Stream stream)
         {
             this.stream = stream;
         }
@@ -66,7 +66,7 @@ namespace Jillzhang.GifUtility
         /// <param name="height">高度</param>
         /// <param name="dataSize">//图像编码流的第一个字节(byte)存放的是数据位大小，在gif通常为1,4,8</param>
         /// <returns>原始数据流</returns>
-        internal byte[] DecodeImageData(int width, int height, int dataSize)
+        public byte[] DecodeImageData(int width, int height, int dataSize)
         {
             int NullCode = -1;
             int pixelCount = width * height;//获取原图像的像素数，公式为 像素数 = 图像长度*图像高度

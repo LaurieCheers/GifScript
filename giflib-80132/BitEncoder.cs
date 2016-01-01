@@ -20,7 +20,7 @@ using System.Text;
 namespace Jillzhang.GifUtility
 {
 
-    internal class BitEncoder
+    public class BitEncoder
     {
         /// <summary>
         /// 上一次处理剩余的bit数
@@ -30,12 +30,12 @@ namespace Jillzhang.GifUtility
         /// <summary>
         /// 输出字节数据的集合
         /// </summary>
-        internal List<Byte> OutList = new List<byte>();
+        public List<Byte> OutList = new List<byte>();
 
         /// <summary>
         /// 当前输出字节数据长度
         /// </summary>
-        internal int Length
+        public int Length
         {
             get
             {
@@ -44,9 +44,9 @@ namespace Jillzhang.GifUtility
         }
         int current_Val;     
 
-        internal int inBit = 8;
+        public int inBit = 8;
 
-        internal BitEncoder(int init_bit)
+        public BitEncoder(int init_bit)
         {
             this.inBit = init_bit;
         }
@@ -56,7 +56,7 @@ namespace Jillzhang.GifUtility
         /// </summary>
         /// <param name="inByte">输入数据</param>
         /// <param name="inBit">输入数据的bit位数</param>
-        internal void Add(int inByte)
+        public void Add(int inByte)
         {         
          
             current_Val  |= (inByte << (current_Bit));
@@ -73,7 +73,7 @@ namespace Jillzhang.GifUtility
         }
 
 
-        internal void End()
+        public void End()
         {
             while (current_Bit > 0)
             {

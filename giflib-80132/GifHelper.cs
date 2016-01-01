@@ -297,7 +297,7 @@ namespace Jillzhang.GifUtility
         /// </summary>
         /// <param name="bmp">Í¼Ïñ</param>
         /// <param name="colorTab">µ÷É«°å</param>
-        static void Quantizer(Bitmap bmp, Color32[] colorTab)
+        public static void Quantizer(Bitmap bmp, Color32[] colorTab)
         {
             BitmapData bmpData = bmp.LockBits(new Rectangle(0, 0, bmp.Width, bmp.Height), ImageLockMode.ReadWrite, bmp.PixelFormat);
             Hashtable table = new Hashtable();

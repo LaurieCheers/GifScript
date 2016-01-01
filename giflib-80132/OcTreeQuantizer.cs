@@ -27,11 +27,11 @@ namespace Jillzhang.GifUtility
     /// <summary>
     /// 八叉树颜色量化器
     /// </summary>
-    internal class OcTreeQuantizer
+    public class OcTreeQuantizer
     {
         private int maxColors = 0;
         OcTree tree;        
-        internal OcTreeQuantizer(int colorDepth)
+        public OcTreeQuantizer(int colorDepth)
         {
             if (colorDepth > 8)
             {
@@ -44,7 +44,7 @@ namespace Jillzhang.GifUtility
             maxColors = 1 << colorDepth;
             tree = new OcTree(colorDepth);
         }
-        internal Color32[] Quantizer(Bitmap bmp)
+        public Color32[] Quantizer(Bitmap bmp)
         {
             BitmapData bmpData = bmp.LockBits(new Rectangle(0, 0, bmp.Width, bmp.Height), ImageLockMode.ReadOnly, bmp.PixelFormat);
             //第一次扫描，扫描整个图像，根据像素值构造八叉树

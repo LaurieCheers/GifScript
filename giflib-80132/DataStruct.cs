@@ -32,9 +32,9 @@ using System.IO;
 
 namespace Jillzhang.GifUtility
 {
-    internal class DataStruct
+    public class DataStruct
     {
-        internal DataStruct()
+        public DataStruct()
         {
 
         }
@@ -42,7 +42,7 @@ namespace Jillzhang.GifUtility
         /// <summary>
         /// 块大小
         /// </summary>
-        internal byte BlockSize
+        public byte BlockSize
         {
             get
             {
@@ -55,7 +55,7 @@ namespace Jillzhang.GifUtility
         }
 
         private byte[] _data = new byte[0];
-        internal byte[] Data
+        public byte[] Data
         {
             get
             {
@@ -67,7 +67,7 @@ namespace Jillzhang.GifUtility
             }
         }
 
-        internal DataStruct(int blockSize,Stream stream)
+        public DataStruct(int blockSize,Stream stream)
         {
             StreamHelper streamHelper = new StreamHelper(stream);
             _blockSize = (byte)blockSize;
@@ -77,7 +77,7 @@ namespace Jillzhang.GifUtility
             }         
         }
 
-        internal byte[] GetBuffer()
+        public byte[] GetBuffer()
         {
             byte[] buffer = new byte[_blockSize + 1];
             buffer[0] = _blockSize;

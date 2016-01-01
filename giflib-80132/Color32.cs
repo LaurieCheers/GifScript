@@ -28,42 +28,42 @@ namespace Jillzhang.GifUtility
     /// 封装的颜色结构
     /// </summary>
     [StructLayout(LayoutKind.Explicit)]
-    internal struct Color32
+    public struct Color32
     {
         /// <summary>
         /// 颜色中的B,位于最低位
         /// </summary>
         [FieldOffset(0)]
-        internal byte Blue;
+        public byte Blue;
 
         /// <summary>
         /// 颜色中的G,位于第二位
         /// </summary>
         [FieldOffset(1)]
-        internal byte Green;
+        public byte Green;
 
         /// <summary>
         /// 颜色中的R,位于第三位
         /// </summary>
         [FieldOffset(2)]
-        internal byte Red;
+        public byte Red;
 
         /// <summary>
         /// 颜色中的A,位于第四位
         /// </summary>
         [FieldOffset(3)]
-        internal byte Alpha;
+        public byte Alpha;
 
         /// <summary>
         /// 颜色的整形值
         /// </summary>
         [FieldOffset(0)]
-        internal int ARGB;
+        public int ARGB;
 
         /// <summary>
         /// 颜色
         /// </summary>
-        internal Color Color
+        public Color Color
         {
             get
             {
@@ -71,7 +71,7 @@ namespace Jillzhang.GifUtility
             }
         }
 
-        internal Color32(int c)
+        public Color32(int c)
         {
             Alpha =0 ;
             Red = 0;
@@ -79,7 +79,7 @@ namespace Jillzhang.GifUtility
             Blue = 0;
             ARGB =c;           
         }
-        internal Color32(byte a, byte r, byte g, byte b)
+        public Color32(byte a, byte r, byte g, byte b)
         {
             ARGB = 0;
             Alpha = a;

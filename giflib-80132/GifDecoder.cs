@@ -61,9 +61,12 @@ namespace Jillzhang.GifUtility
             byte[] piexel = lzwDecoder.DecodeImageData(imgDes.Width, imgDes.Height, dataSize);
             frame.IndexedPixel = piexel;
             int blockSize = streamHelper.Read();
-            DataStruct data = new DataStruct(blockSize, fs);         
-            GraphicEx graphicEx = graphics[frameCount];
-            frame.GraphicExtension = graphicEx;        
+            DataStruct data = new DataStruct(blockSize, fs);
+            if (graphics.Count > frameCount)
+            {
+                GraphicEx graphicEx = graphics[frameCount];
+                frame.GraphicExtension = graphicEx;
+            }
             Bitmap img = GetImageFromPixel(piexel, frame.Palette, imgDes.InterlaceFlag, imgDes.Width, imgDes.Height);
             frame.Image = img;          
             gifImage.Frames.Add(frame);
@@ -157,8 +160,8 @@ namespace Jillzhang.GifUtility
             GifImage gifImage = new GifImage();
             List<GraphicEx> graphics = new List<GraphicEx>();        
             int frameCount = 0;
-            try
-            {
+//            try
+//            {
                 fs = new FileStream(gifPath,FileMode.Open);
                 streamHelper = new StreamHelper(fs);
                 //读取文件头
@@ -216,15 +219,15 @@ namespace Jillzhang.GifUtility
                     }
                     nextFlag = streamHelper.Read();
                 }
-            }
-            catch
-            {
-                throw;
-            }
-            finally
-            {
+//            }
+//            catch
+//            {
+//                throw;
+//            }
+//            finally
+//            {
                 fs.Close();
-            }
+//            }
             return gifImage;
         }     
         #endregion    

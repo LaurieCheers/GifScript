@@ -35,15 +35,15 @@ using System.IO;
 
 namespace Jillzhang.GifUtility
 {
-    internal class StreamHelper
+    public class StreamHelper
     {
         Stream stream;
-        internal StreamHelper(Stream stream)
+        public StreamHelper(Stream stream)
         {
             this.stream = stream;
         }
         //读取指定长度的字节字节
-        internal byte[] ReadByte(int len)
+        public byte[] ReadByte(int len)
         {
             byte[] buffer = new byte[len];
             stream.Read(buffer, 0, len);
@@ -53,24 +53,24 @@ namespace Jillzhang.GifUtility
         /// 读取一个字节
         /// </summary>
         /// <returns></returns>
-        internal int Read()
+        public int Read()
         {
             return stream.ReadByte();
         }
 
-        internal short ReadShort()
+        public short ReadShort()
         {
             byte[] buffer = new byte[2];
             stream.Read(buffer, 0, buffer.Length);
             return BitConverter.ToInt16(buffer, 0);
         }
 
-        internal string ReadString(int length)
+        public string ReadString(int length)
         {
             return new string(ReadChar(length));
         }
 
-        internal char[] ReadChar(int length)
+        public char[] ReadChar(int length)
         {
             byte[] buffer = new byte[length];
             stream.Read(buffer, 0, length);
@@ -79,7 +79,7 @@ namespace Jillzhang.GifUtility
             return charBuffer;
         }
 
-        internal void WriteString(string str)
+        public void WriteString(string str)
         {
             char[] charBuffer = str.ToCharArray();
             byte[] buffer = new byte[charBuffer.Length];
@@ -92,7 +92,7 @@ namespace Jillzhang.GifUtility
             WriteBytes(buffer);
         }
 
-        internal void WriteBytes(byte[] buffer)
+        public void WriteBytes(byte[] buffer)
         {
             stream.Write(buffer, 0, buffer.Length);
         }
@@ -103,7 +103,7 @@ namespace Jillzhang.GifUtility
         /// </summary>
         /// <param name="stream"></param>
         /// <returns></returns>
-        internal ApplicationEx GetApplicationEx(Stream stream)
+        public ApplicationEx GetApplicationEx(Stream stream)
         {
             ApplicationEx appEx = new ApplicationEx();
             int blockSize = Read();
@@ -126,7 +126,7 @@ namespace Jillzhang.GifUtility
         #endregion
 
         #region 从文件数据流中读取注释扩展块
-        internal CommentEx GetCommentEx(Stream stream)
+        public CommentEx GetCommentEx(Stream stream)
         {
             CommentEx cmtEx = new CommentEx();
             StreamHelper streamHelper = new StreamHelper(stream);
@@ -150,7 +150,7 @@ namespace Jillzhang.GifUtility
         /// </summary>
         /// <param name="stream"></param>
         /// <returns></returns>
-        internal PlainTextEx GetPlainTextEx(Stream stream)
+        public PlainTextEx GetPlainTextEx(Stream stream)
         {
             PlainTextEx pltEx = new PlainTextEx();
             int blockSize = Read();
@@ -185,7 +185,7 @@ namespace Jillzhang.GifUtility
         /// </summary>
         /// <param name="stream"></param>
         /// <returns></returns>
-        internal ImageDescriptor GetImageDescriptor(Stream stream)
+        public ImageDescriptor GetImageDescriptor(Stream stream)
         {
             ImageDescriptor ides = new ImageDescriptor();
             ides.XOffSet = ReadShort();
@@ -208,7 +208,7 @@ namespace Jillzhang.GifUtility
         /// </summary>
         /// <param name="stream"></param>
         /// <returns></returns>
-        internal GraphicEx GetGraphicControlExtension(Stream stream)
+        public GraphicEx GetGraphicControlExtension(Stream stream)
         {
             GraphicEx gex = new GraphicEx();
             int blockSize = Read();
@@ -232,7 +232,7 @@ namespace Jillzhang.GifUtility
         /// </summary>
         /// <param name="stream"></param>
         /// <returns></returns>
-        internal LogicalScreenDescriptor GetLCD(Stream stream)
+        public LogicalScreenDescriptor GetLCD(Stream stream)
         {
             LogicalScreenDescriptor lcd = new LogicalScreenDescriptor();
             lcd.Width = ReadShort();
@@ -253,7 +253,7 @@ namespace Jillzhang.GifUtility
         /// 写文件头
         /// </summary>
         /// <param name="header">文件头</param>
-        internal void WriteHeader(string header)
+        public void WriteHeader(string header)
         {
             WriteString(header);
         }
@@ -264,7 +264,7 @@ namespace Jillzhang.GifUtility
         /// 写逻辑屏幕标识符
         /// </summary>
         /// <param name="lsd"></param>
-        internal void WriteLSD(LogicalScreenDescriptor lsd)
+        public void WriteLSD(LogicalScreenDescriptor lsd)
         {
             WriteBytes(lsd.GetBuffer());         
         }
@@ -275,7 +275,7 @@ namespace Jillzhang.GifUtility
         /// 写全局颜色表
         /// </summary>
         /// <param name="buffer">全局颜色表</param>
-        internal void SetGlobalColorTable(byte[] buffer)
+        public void SetGlobalColorTable(byte[] buffer)
         {
             WriteBytes(buffer);           
         }
@@ -286,7 +286,7 @@ namespace Jillzhang.GifUtility
         /// 写入注释扩展集合
         /// </summary>
         /// <param name="comments">注释扩展集合</param>
-        internal void SetCommentExtensions(List<CommentEx> comments)
+        public void SetCommentExtensions(List<CommentEx> comments)
         {
             foreach (CommentEx ce in comments)
             {
@@ -300,7 +300,7 @@ namespace Jillzhang.GifUtility
         /// 写入应用程序展集合
         /// </summary>
         /// <param name="comments">写入应用程序展集合</param>
-        internal void SetApplicationExtensions(List<ApplicationEx> applications)
+        public void SetApplicationExtensions(List<ApplicationEx> applications)
         {
             foreach (ApplicationEx ap in applications)
             {

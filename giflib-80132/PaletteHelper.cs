@@ -25,7 +25,7 @@ namespace Jillzhang.GifUtility
     /// <summary>
     /// 调色板辅助类
     /// </summary>
-    internal class PaletteHelper
+    public class PaletteHelper
     {    
          #region 从数据流中获取颜色列表
         /// <summary>
@@ -33,7 +33,7 @@ namespace Jillzhang.GifUtility
         /// </summary>
         /// <param name="table"></param>
         /// <returns></returns>
-        internal static Color32[] GetColor32s(byte[] table)
+        public static Color32[] GetColor32s(byte[] table)
         {
             Color32[] tab = new Color32[table.Length / 3];
             int i = 0;

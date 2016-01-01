@@ -45,7 +45,7 @@ namespace Jillzhang.GifUtility
         /// <summary>
         /// 背景图片的长度
         /// </summary>
-        internal short Width
+        public short Width
         {
             get
             {
@@ -58,7 +58,7 @@ namespace Jillzhang.GifUtility
         /// <summary>
         /// 背景图片的高度
         /// </summary>
-        internal short Height
+        public short Height
         {
             get
             {
@@ -69,7 +69,7 @@ namespace Jillzhang.GifUtility
 
         #region gif文件头，可能情况有两种:GIF89a或者GIF87a
         string header = "";
-        internal string Header
+        public string Header
         {
             get { return header; }
             set { header = value; }
@@ -81,7 +81,7 @@ namespace Jillzhang.GifUtility
         /// <summary>
         /// 全局颜色列表
         /// </summary>
-        internal byte[] GlobalColorTable
+        public byte[] GlobalColorTable
         {
             get
             {
@@ -98,7 +98,7 @@ namespace Jillzhang.GifUtility
         /// <summary>
         /// Gif的调色板
         /// </summary>
-        internal Color32[] Palette
+        public Color32[] Palette
         {
             get
             {
@@ -114,7 +114,7 @@ namespace Jillzhang.GifUtility
         /// <summary>
         /// 全局颜色的索引表
         /// </summary>
-        internal Hashtable GlobalColorIndexedTable
+        public Hashtable GlobalColorIndexedTable
         {
             get { return table; }
         }
@@ -125,7 +125,7 @@ namespace Jillzhang.GifUtility
         /// <summary>
         /// 注释块集合
         /// </summary>
-        internal List<CommentEx> CommentExtensions
+        public List<CommentEx> CommentExtensions
         {
             get
             {
@@ -143,7 +143,7 @@ namespace Jillzhang.GifUtility
         /// <summary>
         /// 应用程序扩展块集合
         /// </summary>
-        internal List<ApplicationEx> ApplictionExtensions
+        public List<ApplicationEx> ApplictionExtensions
         {
             get
             {
@@ -161,7 +161,7 @@ namespace Jillzhang.GifUtility
         /// <summary>
         /// 图形文本扩展集合
         /// </summary>
-        internal List<PlainTextEx> PlainTextEntensions
+        public List<PlainTextEx> PlainTextEntensions
         {
             get
             {
@@ -179,7 +179,7 @@ namespace Jillzhang.GifUtility
         /// <summary>
         /// 逻辑屏幕描述
         /// </summary>
-        internal LogicalScreenDescriptor LogicalScreenDescriptor
+        public LogicalScreenDescriptor LogicalScreenDescriptor
         {
             get
             {
@@ -197,7 +197,7 @@ namespace Jillzhang.GifUtility
         /// <summary>
         /// 解析出来的帧集合
         /// </summary>
-        internal List<GifFrame> Frames
+        public List<GifFrame> Frames
         {
             get
             {

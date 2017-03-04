@@ -1,0 +1,76 @@
+<html>
+<style>
+body{font-family: "Verdana"}
+</style>
+<body>
+<h1><center>GifScript</center></h1>
+GifScript is a simple esoteric programming language.
+<p>
+<h3>A Note on Pronunciation</h3>
+As all right-minded people know, the G in GIF should be pronounced Spanish-style, as a voiceless uvular fricative. (like the J in Jalapeno).
+<p>
+<h3>Data Types</h3>
+GifScript has two data types: colors, and color cubes.
+<p>
+A color is a standard 3-byte RGB color, ranging from #000000 (pure black) to #FFFFFF (pure white).
+<p>
+A color cube is a 16x16x16 grid of colors. Entries from the grid are indexed by color, where red is the X axis, green is the Y axis, and blue is the Z axis. Since the cube is only 16 pixels wide, the lower 4 bits of each color are ignored for this. (In other words, any color between #303030 and #3F3F3F would address the same pixel - the one 3 across, 3 down, and 3 in. By convention we would say this is pixel #333333.)
+<p>
+On disk, we store color cubes in the GIF file format: 16x16 pixel images, with the Z axis being represented by 16 frames.
+<p>
+<h3>Anatomy of a GifScript program</h3>
+Each GifScript program is a color cube. The GifScript interpreter reads it like a book - evaluating the top left pixel on the first frame, continuing to the right until it overflows to the next line, and so on. And when it finishes the first frame, it resumes at the top left pixel of the second frame, etc. If it gets all the way to position #FFFFFF, the program halts.
+<p>
+Aside from the program itself, the interpreter maintains two important pieces of state -
+<p>
+<b>Current Color:</b> this is initially #000000 (black), but instructions can change it. Most instructions use the current color in some way.
+<p>
+<b>Registers:</b> In GifScript you have access to 16x16x16 registers, identified (you guessed it) by color. Each register points to a specific pixel within a specific color cube. Initially, each one points to position #000000 of its own unique pure black color cube, but you can load new cubes for them to point to, or make them point to each other's cubes.
+<p>
+One thing worth noting - at any given moment, one of the registers is the "running" register, and it points to the pixel that the interpreter will read next. By default, that's register #FFFFFF. In other words, when GifScript starts, register #FFFFFF points to the program cube, and setting its position changes what instruction is be executed next. ("Goto", in other words.)
+<p>
+Each register also has a filename (string) associated with it. By default this is just its color name (for example "ff0000.gif"). This is the filename used when loading and saving that register.
+<p>
+GifScript has the following 12 special instruction colors:</p>
+<img src="gifscript_instructions.png">
+<ul>
+<li><h3>Return (<span style="color:#000000">#000000</span>)</h3>Return the current color from the current function.</p></li></li>
+<li><h3>Assign (<span style="color:#008800">#008800</span>)</h3><code>current-color.pixel = right-hand-side</code>
+<p>Set the contents of the selected pixel to the result of evaluating the right-hand side. (If that pixel is not assignable, return instead).</p></li>
+<li><h3>Call (<span style="color:#00CC00">#00CC00</span>)</h3><code>right-hand-side.register.call(current-color)</code>
+<p>Evaluate the right-hand side, and call the register it selects as a function.</p></li>
+<li><h3>Load (<span style="color:#CC0000">#CC0000</span>)</h3>
+<code>current-color.register.load(current-color.register.filename)</code>
+<p>Load a gif into the selected register.</p></li>
+<li><h3>Save (<span style="color:#CC8800">#CC8800</span>)</h3>
+<code>current-color.register.save(current-color.register.filename)</code>
+<p>Save the selected register as a gif.</p></li>
+<li><h3>Retarget (<span style="color:#CCCC00">#CCCC00</span>)</h3>
+<code>current-color.register.cube = right-hand-side.register.cube</code>
+<p>Point the selected register to the result of evaluating the right hand side.</p></li>
+<li><h3>RegisterPos (<span style="color:#0000CC">#0000CC</span>)</h3>
+<code>current-color = current-color.register.position</code><br>
+<p>Get the position of the selected register. (Assigning to this value will move the register.)</p></li>
+<li><h3>RegisterVal (<span style="color:#0088CC">#0088CC</span>)</h3>
+<code>current color = current-color.register.pixel</code><br>
+<p>Get the color pointed to by the selected register. (Assigning to this value will modify the register's color cube.)</p></li>
+<li><h3>Data (<span style="color:#00CCCC">#00CCCC</span>)</h3>
+<code>current-color = running-register.cube[current-color]</code><br>
+<p>Get the selected pixel from the running program. (Assigning to this value will modify the program.)</p></li>
+<li><h3>Modify (<span style="color:#CC00CC">#CC00CC</span>)</h3>
+<code>current-color = modify(current-color)</code>
+<p>Deduce a pattern from the next 3 pixels, and apply that pattern to current-color. (See Modifiers.) If the pattern can't be deduced or the result overflows, return instead. Resume execution after those pixels. (The resultant value is not assignable.)</p></li>
+<li><h3>Name (<span style="color:#CC88CC">#CC88CC</span>)</h3>
+<code>current-color.register.filename = filename</code>
+<p>Read the next pixels as a filename. (Interpreting each byte as an ASCII character, and stopping at the first 0 byte). Resume execution after the string.</p></li>
+<li><h3>Literal (<span style="color:#CCCCCC">#CCCCCC</span>)</h3>
+<code>current-color = next-pixel.</code>
+<p>Store the next pixel as the current color. Resume execution after that pixel. (Assigning to this value will modify the program.)</p></li>
+<li><h3>Other</h3>
+<code>current-color = this-pixel</code>
+<p>If the interpreter reads any color other than these 12, it's simply stored as the current color. (Assigning to this value will modify the program.)</p></li>
+</ul>
+<h3>Modifiers</h3>
+
+</body>
+</html>

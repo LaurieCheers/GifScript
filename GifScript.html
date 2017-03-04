@@ -25,16 +25,19 @@ Aside from the program itself, the interpreter maintains two important pieces of
 <p>
 <b>Current Color:</b> this is initially #000000 (black), but instructions can change it. Most instructions use the current color in some way.
 <p>
-<b>Registers:</b> In GifScript you have access to 16x16x16 registers, identified (you guessed it) by color. Each register points to a specific pixel within a specific color cube. Initially, each one points to position #000000 of its own unique pure black color cube, but you can load new cubes for them to point to, or make them point to each other's cubes.
+<b>Registers:</b> In GifScript you have access to 4096 registers (16x16x16), identified (you guessed it) by color. Each register points to a specific pixel within a specific color cube. Initially, each one points to position #000000 of its own unique pure black color cube, but you can load new cubes for them to point to, or make them point to each other's cubes.
 <p>
 One thing worth noting - at any given moment, one of the registers is the "running" register, and it points to the pixel that the interpreter will read next. By default, that's register #FFFFFF. In other words, when GifScript starts, register #FFFFFF points to the program cube, and setting its position changes what instruction is be executed next. ("Goto", in other words.)
 <p>
 Each register also has a filename (string) associated with it. By default this is just its color name (for example "ff0000.gif"). This is the filename used when loading and saving that register.
 <p>
+<h3>Instructions</h3>
+<p>
 GifScript has the following 12 special instruction colors:</p>
 <img src="gifscript_instructions.png">
 <ul>
-<li><h3>Return (<span style="color:#000000">#000000</span>)</h3>Return the current color from the current function.</p></li></li>
+<li><h3>Return (<span style="color:#000000">#000000</span>)</h3>Return the current color from the current function. If we're not currently in a function, terminate.</p>
+<p>NB: All the instructions below that "evaluate the right-hand side" do so by executing the right-hand side like a function. In other words, it will run the right-hand side code until it hits a "return" instruction, then go back to evaluate the instruction that was expecting a right-hand side value, and then resume execution after that return instruction.</p></li></li>
 <li><h3>Assign (<span style="color:#008800">#008800</span>)</h3><code>current-color.pixel = right-hand-side</code>
 <p>Set the contents of the selected pixel to the result of evaluating the right-hand side. (If that pixel is not assignable, return instead).</p></li>
 <li><h3>Call (<span style="color:#00CC00">#00CC00</span>)</h3><code>right-hand-side.register.call(current-color)</code>
@@ -68,9 +71,15 @@ GifScript has the following 12 special instruction colors:</p>
 <p>Store the next pixel as the current color. Resume execution after that pixel. (Assigning to this value will modify the program.)</p></li>
 <li><h3>Other</h3>
 <code>current-color = this-pixel</code>
-<p>If the interpreter reads any color other than these 12, it's simply stored as the current color. (Assigning to this value will modify the program.)</p></li>
+<p>If the interpreter reads any color other than the 12 above, it simply records that pixel as the current color. (Assigning to this value will modify the program.)</p></li>
 </ul>
 <h3>Modifiers</h3>
-
+<p>You might have noticed that GifScript has no instructions for supporting basic math functionality such as adding, subtracting, or comparing numbers. That's where the Modify instruction comes in! Each Modify instruction is followed by three colors that illustrate the modification you want to make. Each pair of colors (the first and second, and the second and third) is illustrating a before-and-after transition.</p>
+<h4>Example 1:</h4>
+<img src="gifscript_example1.png">
+<p>Here we see a simple add modifier, which will add 32 points to the blue channel at each step. If this overflows the blue channel, the modifier fails. (In other words, acts like a Return instruction - this can be a useful building block for logic.)</p>
+<h4>Example 2:</h4>
+<img src="gifscript_example2.png">
+<p>If you don't want to fail on overflow, show an example of the overflow behaviour you want! In this case we're overflowing into the (full) green channel, which in turn overflows into the red channel.</p>
 </body>
 </html>

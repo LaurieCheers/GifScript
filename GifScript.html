@@ -4,7 +4,8 @@ body{font-family: "Verdana"}
 </style>
 <body>
 <h1><center>GifScript</center></h1>
-GifScript is a simple esoteric programming language.
+GifScript is a simple esoteric programming language by Laurie and Michael Cheers.
+<img src="Examples/helloworld_out.gif">
 <p>
 <h3>A Note on Pronunciation</h3>
 As all right-minded people know, the G in GIF should be pronounced Spanish-style, as a voiceless uvular fricative. (like the J in Jalapeno).
@@ -31,9 +32,22 @@ One thing worth noting - at any given moment, one of the registers is the "runni
 <p>
 Each register also has a filename (string) associated with it. By default this is just its color name (for example "ff0000.gif"). This is the filename used when loading and saving that register.
 <p>
+<h3>Worked Example</h3>
+<p>Before we get into the technical specifications, it's probably helpful to work through a simple example <img src="Examples/docexample.gif"> to see how GifScript code hangs together.</p>
+<img src="gifscript_example0.png">
+<p>GifScript code tends to form into blocks that end with a Return instruction. So for example, the line above contains three blocks. Let's read the first block.</p>
+<ul><li>Reading from left to right, the first color we encounter is #888833. This color has no special meaning - all it means is that we record this color as the current color.</li>
+<li>The second color is #008800, the Assign instruction. Nothing happens just yet, but next time we see a return statement, we're going to assign something to have the color #888833.</li>
+<li>The third color is #884400. Again, this has no special meaning, so we just make #884400 the current color.</li>
+<li>Next we encounter #0000CC, the Register-Position instruction. The current color is #884400, so this means we'll get the position of register #884400. That position becomes the current color.</li>
+<li>And finally we see #000000, the Return instruction. The Assign we had queued up can now resolve. Register #884400 now points to position #888833 within its color cube - namely, in the middle (88 along and 88 down) of its fourth frame (33).</li>
+</ul>
+<p>The second block proceeds in a similar way, except that instead of using the Register-Position instruction, it uses Register-Value. The pixel pointed to by register #884400 will be assigned the color #EE77CC, a rather nice pink - much nicer than the boring brown #888833.</p>
+<p>In the final block, there are just two instructions. We set the current color to #884400, and then save the color cube of register #884400 as a GIF file. Hence, if you run this program, you should find that it creates a file named "884400.gif", with one pink pixel in the middle of one of its frames: <img src="Examples/docexample_out.gif"></p>
+<p>PS: Why are we using register #884400? No particular reason, except that it's a nice color that's not easily mistaken for any of the instruction colors.</p>
 <h3>Instructions</h3>
 <p>
-GifScript has the following 12 special instruction colors:</p>
+GifScript understands the following 12 special instruction colors:</p>
 <img src="gifscript_instructions.png">
 <ul>
 <li><h3>Return (<span style="color:#000000">#000000</span>)</h3>Return the current color from the current function. If we're not currently in a function, terminate.</p>
@@ -80,9 +94,9 @@ GifScript has the following 12 special instruction colors:</p>
 <p>Here we see a simple add modifier, which will add 32 points to the blue channel at each step. If this overflows the blue channel, the modifier fails. (In other words, acts like a Return instruction - this can be a useful building block for logic.)</p>
 <h4>Example 2:</h4>
 <img src="gifscript_example2.png">
-<p>If you don't want to fail on overflow, show an example of the overflow behaviour you want! In this case we're overflowing into the (full) green channel, which in turn overflows into the red channel.</p>
+<p>If you don't want to fail on overflow, show an example of the overflow behaviour you want. In this case we're overflowing into the (full) green channel, which in turn overflows into the red channel. NB: For GifScript to understand your intent, the first two example colors should illustrate an addition that does not overflow, and the third should illustrate the overflow.</p>
 <p>
-Hopefully that has illustrated the kinds of operations that are possible with modifiers. To be precise, the system understands the following operations, and will try out each of these rules, in this order, (independently for each channel) until it finds one that fits the examples it has been given.
+Hopefully this shows you the kinds of operations that are possible with modifiers. To be precise, the system understands the following operations, and will try out each of these rules, in this order, for each channel until it finds one that fits the examples it has been given.
 </p>
 <table>
 <tr><td><i>None</i></td><td>The same value as before.</td></tr>
@@ -91,8 +105,7 @@ Hopefully that has illustrated the kinds of operations that are possible with mo
 <tr><td><i>Invert</i></td><td>255 minus the old value.</td></tr>
 <tr><td><i>Add</i></td><td>Increase (or decrease) by a constant; fail if the value overflows.</td></tr>
 <tr><td><i>Wrap Add</i></td><td>Increase (or decrease) by a constant; wrap around if the value overflows.</td></tr>
-<tr><td><i>Overflow</i></td><td>Increase or decrease by a constant when another (specific) channel's Wrap Add or Wrap Overflow channel overflows. Fail if the value overflows.</td></tr>
-<tr><td><i>Wrap Overflow</i></td><td>Like Overflow, except it wraps around instead of failing when the value overflows.</td></tr>
+<tr><td><i>Overflow</i></td><td>Increase or decrease by a constant when another (specific) channel's Wrap Add or Overflow channel overflows.</td></tr>
 </table>
 </body>
 </html>

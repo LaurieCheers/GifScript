@@ -205,6 +205,12 @@ namespace GifScript
             get { return pixels[index.R16, index.G16]; }
             set { pixels[index.R16, index.G16] = value; }
         }
+
+        public ColorRGB this[int X, int Y]
+        {
+            get { return pixels[X, Y]; }
+            set { pixels[X, Y] = value; }
+        }
     }
 
     public class GifCube
@@ -249,22 +255,23 @@ namespace GifScript
 
         public void Save(string filename)
         {
-            Bitmap bmp = new Bitmap(256, 256, PixelFormat.Format24bppRgb);
+            Bitmap bmp = new Bitmap(16, 16, PixelFormat.Format8bppIndexed);
+            ColorPalette colorPalette = bmp.Palette;
             Rectangle rect = new Rectangle(0, 0, bmp.Width, bmp.Height);
             BitmapData bmpData = bmp.LockBits(rect, ImageLockMode.ReadWrite, bmp.PixelFormat);
 
             // Declare an array to hold the bytes of the bitmap.
             int numBytes = Math.Abs(bmpData.Stride) * bmp.Height;
             byte[] rgbValues = new byte[numBytes];
-            int Idx = 0;
-            for (int Y = 0; Y < 256; Y++)
+            byte Idx = 0;
+            for (int Y = 0; Y < 16; Y++)
             {
-                for (int X = 0; X < 256; X++)
+                for (int X = 0; X < 16; X++)
                 {
-                    ColorRGB col = this[new ColorRGB((byte)X, (byte)Y, 0)];
-                    rgbValues[Idx++] = col.B;
-                    rgbValues[Idx++] = col.G;
-                    rgbValues[Idx++] = col.R;
+                    ColorRGB col = slices[0][X,Y];
+                    colorPalette.Entries[Idx] = Color.FromArgb(col.R, col.G, col.B);
+                    rgbValues[Idx] = Idx;
+                    Idx++;
                 }
             }
 
@@ -274,6 +281,7 @@ namespace GifScript
             // Unlock the bits.
             bmp.UnlockBits(bmpData);
 
+            bmp.Palette = colorPalette;
             //@"C:\Users\Laurie\Pictures\fillpinkOUT.gif"
             bmp.Save(filename, ImageFormat.Gif);
         }
@@ -630,7 +638,7 @@ namespace GifScript
                 return ModifyRule.SetConstant;
             }
 
-            if (channelExamples[1] == 255- channelExamples[0] && channelExamples[2] == 255- channelExamples[1])
+            if (channelExamples[1] == 255 - channelExamples[0] && channelExamples[2] == 255 - channelExamples[1])
             {
                 return ModifyRule.Invert;
             }

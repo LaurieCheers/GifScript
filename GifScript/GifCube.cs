@@ -1,4 +1,5 @@
-﻿using System;
+﻿using NGif;
+using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Imaging;
@@ -255,35 +256,67 @@ namespace GifScript
 
         public void Save(string filename)
         {
-            Bitmap bmp = new Bitmap(16, 16, PixelFormat.Format8bppIndexed);
-            ColorPalette colorPalette = bmp.Palette;
-            Rectangle rect = new Rectangle(0, 0, bmp.Width, bmp.Height);
-            BitmapData bmpData = bmp.LockBits(rect, ImageLockMode.ReadWrite, bmp.PixelFormat);
+            AnimatedGifEncoder e = new AnimatedGifEncoder();
+            e.Start(filename);
+            e.SetDelay(200);
+            //-1:no repeat,0:always repeat
+            e.SetRepeat(0);
 
-            // Declare an array to hold the bytes of the bitmap.
-            int numBytes = Math.Abs(bmpData.Stride) * bmp.Height;
-            byte[] rgbValues = new byte[numBytes];
-            byte Idx = 0;
-            for (int Y = 0; Y < 16; Y++)
+            int lastFrame = 15;
+            // find the last interesting frame
+            while(lastFrame > 0)
             {
-                for (int X = 0; X < 16; X++)
+                GifCubeSlice slice = slices[lastFrame];
+                if(slice != null)
                 {
-                    ColorRGB col = slices[0][X,Y];
-                    colorPalette.Entries[Idx] = Color.FromArgb(col.R, col.G, col.B);
-                    rgbValues[Idx] = Idx;
-                    Idx++;
+                    break;
                 }
+                lastFrame --;
             }
 
-            // Copy the RGB values back to the bitmap
-            System.Runtime.InteropServices.Marshal.Copy(rgbValues, 0, bmpData.Scan0, numBytes);
+            for (int frame = 0; frame <= lastFrame; frame++)
+            {
+                GifCubeSlice slice = slices[frame];
 
-            // Unlock the bits.
-            bmp.UnlockBits(bmpData);
+                Bitmap bmp = new Bitmap(16, 16, PixelFormat.Format8bppIndexed);
+                ColorPalette colorPalette = bmp.Palette;
+                Rectangle rect = new Rectangle(0, 0, bmp.Width, bmp.Height);
+                BitmapData bmpData = bmp.LockBits(rect, ImageLockMode.ReadWrite, bmp.PixelFormat);
 
-            bmp.Palette = colorPalette;
+                // Declare an array to hold the bytes of the bitmap.
+                int numBytes = Math.Abs(bmpData.Stride) * bmp.Height;
+                byte[] rgbValues = new byte[numBytes];
+                byte Idx = 0;
+                for (int Y = 0; Y < 16; Y++)
+                {
+                    for (int X = 0; X < 16; X++)
+                    {
+                        ColorRGB col;
+                        if (slice != null)
+                            col = slices[frame][X, Y];
+                        else
+                            col = ColorRGB.Black;
+
+                        colorPalette.Entries[Idx] = Color.FromArgb(col.R, col.G, col.B);
+                        rgbValues[Idx] = Idx;
+                        Idx++;
+                    }
+                }
+
+                // Copy the RGB values back to the bitmap
+                System.Runtime.InteropServices.Marshal.Copy(rgbValues, 0, bmpData.Scan0, numBytes);
+
+                // Unlock the bits.
+                bmp.UnlockBits(bmpData);
+
+                bmp.Palette = colorPalette;
+                e.AddFrame(bmp);// Image.FromFile(imageFilePaths[i]));
+            }
+            e.Finish();
+            
+
             //@"C:\Users\Laurie\Pictures\fillpinkOUT.gif"
-            bmp.Save(filename, ImageFormat.Gif);
+            //bmp.Save(filename, ImageFormat.Gif);
         }
     }
 
@@ -760,14 +793,17 @@ namespace GifScript
             }
         }
 
+        int[] overflowTryOrder = new int[] { 1, 0, 2 };
+
         ModifyRule TryOverflowRule(ModifyRule[] rulesSoFar, int[] parameters, byte[][] examples, int channel)
         {
             byte[] channelExamples = examples[channel];
             byte[] example0 = new byte[] { examples[0][0], examples[1][0], examples[2][0] };
             byte[] example1 = new byte[] { examples[0][1], examples[1][1], examples[2][1] };
 
-            for (int tryChannel = 0; tryChannel < 3; tryChannel++)
+            for (int tryOrderIdx = 0; tryOrderIdx < 3; tryOrderIdx++)
             {
+                int tryChannel = overflowTryOrder[tryOrderIdx];
                 if(rulesSoFar[tryChannel] >= ModifyRule.Wrap255Add)
                 {
                     bool overflow0 = CheckOverflow(tryChannel, example0, rulesSoFar, parameters);

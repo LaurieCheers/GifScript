@@ -54,6 +54,10 @@
       <Project>{cfdcacd9-33af-499c-a9f5-6e6bd1dbac35}</Project>
       <Name>GifUtility</Name>
     </ProjectReference>
+    <ProjectReference Include="..\NGif\NGif.csproj">
+      <Project>{1C3A03CA-5E55-4CC4-9746-194A4188960A}</Project>
+      <Name>NGif</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

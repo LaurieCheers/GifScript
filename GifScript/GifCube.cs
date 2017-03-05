@@ -73,20 +73,20 @@ namespace GifScript
 
         public ColorRGB Increment(out bool overflow)
         {
-            if (R < 255)
+            if (R16 < 15)
             {
                 overflow = false;
-                return new ColorRGB((byte)(R + 1), G, B);
+                return new ColorRGB((byte)(0x11*(R16 + 1)), G, B);
             }
-            else if(G < 255)
+            else if(G16 < 15)
             {
                 overflow = false;
-                return new ColorRGB(0, (byte)(G+1), B);
+                return new ColorRGB(0, (byte)(0x11*(G16+1)), B);
             }
-            else if (B < 255)
+            else if (B16 < 15)
             {
                 overflow = false;
-                return new ColorRGB(0, 0, (byte)(B+1));
+                return new ColorRGB(0, 0, (byte)(0x11*(B16+1)));
             }
             else
             {
@@ -405,7 +405,7 @@ namespace GifScript
 
             // point to the next instruction
             bool overflow;
-            registerPositions[runningRegister] = registerPositions[runningRegister].AddOffset(16, out overflow);
+            registerPositions[runningRegister] = registerPositions[runningRegister].Increment(out overflow);
 
             if(overflow)
             {
@@ -539,11 +539,19 @@ namespace GifScript
             CopyG,
             CopyB,
             SetConstant,
+            Invert,
             Add,
-            WrapAdd,
             OverflowR,
             OverflowG,
-            OverflowB
+            OverflowB,
+            Wrap255Add,
+            Wrap255OverflowR,
+            Wrap255OverflowG,
+            Wrap255OverflowB,
+            Wrap272Add,
+            Wrap272OverflowR,
+            Wrap272OverflowG,
+            Wrap272OverflowB
         };
 
         IGifValue Modify(ColorRGB value, ColorRGB[] modifyExamples, out bool error)
@@ -562,89 +570,289 @@ namespace GifScript
 
             ModifyRule[] rules = new ModifyRule[3];
             int[] parameters = new int[3];
-            rules[0] = DeduceModifyRule(new byte[] { modifyExamples[0].R, modifyExamples[1].R, modifyExamples[2].R }, modifyExamples, ModifyRule.CopyR, ref parameters[0]);
-            rules[1] = DeduceModifyRule(new byte[] { modifyExamples[0].G, modifyExamples[1].G, modifyExamples[2].G }, modifyExamples, ModifyRule.CopyG, ref parameters[1]);
-            rules[2] = DeduceModifyRule(new byte[] { modifyExamples[0].B, modifyExamples[1].B, modifyExamples[2].B }, modifyExamples, ModifyRule.CopyB, ref parameters[2]);
+            byte[][] examples = new byte[][] {
+                new byte[] { modifyExamples[0].R, modifyExamples[1].R, modifyExamples[2].R },
+                new byte[] { modifyExamples[0].G, modifyExamples[1].G, modifyExamples[2].G },
+                new byte[] { modifyExamples[0].B, modifyExamples[1].B, modifyExamples[2].B },
+            };
+            rules[0] = DeduceModifyRule(examples, 0, ref parameters[0]);
+            rules[1] = DeduceModifyRule(examples, 1, ref parameters[1]);
+            rules[2] = DeduceModifyRule(examples, 2, ref parameters[2]);
 
-            //TODO: if we have at least one ModifyRule.Unknown and at least one ModifyRule.WrapAdd, try inserting some Overflow rules.
+            //if we have at least one Unknown rule and at least one Wrap255Add or Wrap272Add, try inserting some Overflow rules.
+            if (rules[1] == ModifyRule.Unknown)
+            {
+                //NB try to resolve the green channel first; the others are allowed to chain their Overflows off it, but not vice versa
+                rules[1] = TryOverflowRule(rules, parameters, examples, 1);
+            }
+
+            if (rules[0] == ModifyRule.Unknown)
+            {
+                rules[0] = TryOverflowRule(rules, parameters, examples, 0);
+            }
+
+            if (rules[2] == ModifyRule.Unknown)
+            {
+                rules[2] = TryOverflowRule(rules, parameters, examples, 2);
+            }
 
             bool errorR, errorG, errorB;
-            byte R = ApplyRule(value.R, value, rules[0], parameters[0], out errorR);
-            byte G = ApplyRule(value.G, value, rules[1], parameters[1], out errorG);
-            byte B = ApplyRule(value.B, value, rules[2], parameters[2], out errorB);
+            byte[] input = new byte[] { value.R, value.G, value.B };
+            byte R = ApplyRule(input, rules, parameters, 0, out errorR);
+            byte G = ApplyRule(input, rules, parameters, 1, out errorG);
+            byte B = ApplyRule(input, rules, parameters, 2, out errorB);
 
             error = errorR || errorG || errorB;
             return new GifValue_Readonly(new ColorRGB(R, G, B));
         }
 
-        ModifyRule DeduceModifyRule(byte[] examples, ColorRGB[] allChannels, ModifyRule unchangedRule, ref int parameter)
+        ModifyRule DeduceModifyRule(byte[][] examples, int channel, ref int parameter)
         {
-            if (examples[0] == examples[1] && examples[0] == examples[2])
-                return unchangedRule;
+            byte[] channelExamples = examples[channel];
 
-            if (examples[1] == allChannels[0].R && examples[2] == allChannels[1].R)
+            if (channelExamples[0] == channelExamples[1] && channelExamples[0] == channelExamples[2])
+            {
+                return ModifyRule.CopyR + channel;
+            }
+
+            if (channelExamples[1] == examples[0][0] && channelExamples[2] == examples[0][1])
                 return ModifyRule.CopyR;
 
-            if (examples[1] == allChannels[0].G && examples[2] == allChannels[1].G)
+            if (channelExamples[1] == examples[1][0] && channelExamples[2] == examples[1][1])
                 return ModifyRule.CopyG;
 
-            if (examples[1] == allChannels[0].B && examples[2] == allChannels[1].B)
+            if (channelExamples[1] == examples[2][0] && channelExamples[2] == examples[2][1])
                 return ModifyRule.CopyB;
 
-            if (examples[1] == examples[2])
+            if (channelExamples[1] == channelExamples[2])
             {
-                parameter = examples[1];
+                parameter = channelExamples[1];
                 return ModifyRule.SetConstant;
             }
 
-            if (examples[1]-examples[0] == examples[2]-examples[1])
+            if (channelExamples[1] == 255- channelExamples[0] && channelExamples[2] == 255- channelExamples[1])
             {
-                parameter = examples[1]-examples[0];
+                return ModifyRule.Invert;
+            }
+
+            if (channelExamples[1]- channelExamples[0] == channelExamples[2]- channelExamples[1])
+            {
+                parameter = channelExamples[1]- channelExamples[0];
                 return ModifyRule.Add;
             }
 
-            if ((examples[1]+256 - examples[0])%256 == (examples[2]+256 - examples[1])%256)
+            if ((channelExamples[1]+256 - channelExamples[0])%256 == (channelExamples[2]+256 - channelExamples[1])%256)
             {
-                parameter = (examples[1]+256 - examples[0])%256;
+                parameter = (channelExamples[1]+256 - channelExamples[0])%256;
                 if (parameter > 127)
                     parameter -= 256;
-                return ModifyRule.WrapAdd;
+                else if (parameter < -128)
+                    parameter += 256;
+                return ModifyRule.Wrap255Add;
+            }
+            
+            // a bit weird, but we also support a wrap ceiling of 272 - because we want 0xEE, 0xFF, 0x00 to be a valid wrapping sequence.
+            if ((channelExamples[1] + 272 - channelExamples[0]) % 272 == (channelExamples[2] + 272 - channelExamples[1]) % 272)
+            {
+                parameter = (channelExamples[1] + 272 - channelExamples[0]) % 272;
+                if (parameter > 127)
+                    parameter -= 256;
+                else if (parameter < -128)
+                    parameter += 256;
+                return ModifyRule.Wrap272Add;
             }
 
             return ModifyRule.Unknown;
         }
 
-        byte ApplyRule(byte channel, ColorRGB input, ModifyRule rule, int parameter, out bool error)
+        byte ApplyRule(byte[] input, ModifyRule[] rules, int[] parameters, int channel, out bool error)
         {
             error = false;
 
-            switch (rule)
+            switch (rules[channel])
             {
                 case ModifyRule.CopyR:
-                    return input.R;
+                    return input[0];
                 case ModifyRule.CopyG:
-                    return input.G;
+                    return input[1];
                 case ModifyRule.CopyB:
-                    return input.B;
+                    return input[2];
                 case ModifyRule.SetConstant:
-                    return (byte)parameter;
+                    return (byte)parameters[channel];
+                case ModifyRule.Invert:
+                    return (byte)(255-input[channel]);
                 case ModifyRule.Add:
                     {
-                        int result = channel + parameter;
+                        int result = input[channel] + parameters[channel];
                         if (result < 0 || result > 255)
                         {
                             error = true;
                         }
                         return (byte)result;
                     }
-                case ModifyRule.WrapAdd:
+                case ModifyRule.Wrap255Add:
                     {
-                        int result = channel + parameter;
+                        int result = input[channel] + parameters[channel];
                         return (byte)result;
+                    }
+                case ModifyRule.Wrap272Add:
+                    {
+                        int result = input[channel] + parameters[channel];
+                        return (byte)(result%272);
+                    }
+                case ModifyRule.OverflowR:
+                case ModifyRule.OverflowG:
+                case ModifyRule.OverflowB:
+                    {
+                        if (CheckOverflow(rules[channel] - ModifyRule.OverflowR, input, rules, parameters))
+                        {
+                            int result = input[channel] + parameters[channel];
+                            if (result < 0 || result > 255)
+                            {
+                                error = true;
+                            }
+                            return (byte)result;
+                        }
+                        else
+                        {
+                            return input[channel];
+                        }
+                    }
+                case ModifyRule.Wrap255OverflowR:
+                case ModifyRule.Wrap255OverflowG:
+                case ModifyRule.Wrap255OverflowB:
+                    {
+                        if (CheckOverflow(rules[channel] - ModifyRule.Wrap255OverflowR, input, rules, parameters))
+                        {
+                            int result = input[channel] + parameters[channel];
+                            return (byte)result;
+                        }
+                        else
+                        {
+                            return input[channel];
+                        }
+                    }
+                case ModifyRule.Wrap272OverflowR:
+                case ModifyRule.Wrap272OverflowG:
+                case ModifyRule.Wrap272OverflowB:
+                    {
+                        if (CheckOverflow(rules[channel] - ModifyRule.Wrap272OverflowR, input, rules, parameters))
+                        {
+                            int result = input[channel] + parameters[channel];
+                            return (byte)(result % 272);
+                        }
+                        else
+                        {
+                            return input[channel];
+                        }
                     }
                 default:
                     error = true;
                     return 0;
+            }
+        }
+
+        ModifyRule TryOverflowRule(ModifyRule[] rulesSoFar, int[] parameters, byte[][] examples, int channel)
+        {
+            byte[] channelExamples = examples[channel];
+            byte[] example0 = new byte[] { examples[0][0], examples[1][0], examples[2][0] };
+            byte[] example1 = new byte[] { examples[0][1], examples[1][1], examples[2][1] };
+
+            for (int tryChannel = 0; tryChannel < 3; tryChannel++)
+            {
+                if(rulesSoFar[tryChannel] >= ModifyRule.Wrap255Add)
+                {
+                    bool overflow0 = CheckOverflow(tryChannel, example0, rulesSoFar, parameters);
+                    bool overflow1 = CheckOverflow(tryChannel, example1, rulesSoFar, parameters);
+
+                    // for an overflow rule to fit, this channel must change when and only when the target overflows
+                    if (overflow0 != (channelExamples[0] != channelExamples[1]))
+                        break;
+                    if (overflow1 != (channelExamples[1] != channelExamples[2]))
+                        break;
+                    // and the overflow must happen exactly once
+                    if (overflow0 == overflow1)
+                        break;
+
+                    byte channelExampleA;
+                    byte channelExampleB;
+                    if(overflow0)
+                    {
+                        channelExampleA = channelExamples[0];
+                        channelExampleB = channelExamples[1];
+                    }
+                    else // therefore overflow1
+                    {
+                        channelExampleA = channelExamples[1];
+                        channelExampleB = channelExamples[2];
+                    }
+
+                    int parameter;
+                    if (rulesSoFar[tryChannel] >= ModifyRule.Wrap272Add)
+                        parameter = (channelExampleB + 272 - channelExampleA) % 272;
+                    else
+                        parameter = (channelExampleB + 256 - channelExampleA) % 256;
+
+                    if (parameter > 127)
+                        parameter -= 256;
+                    else if (parameter < -128)
+                        parameter += 256;
+
+                    parameters[channel] = parameter;
+                    if (channelExampleA + parameter != channelExampleB)
+                    {
+                        // the overflow rule itself overflowed!
+                        if (rulesSoFar[tryChannel] >= ModifyRule.Wrap272Add)
+                        {
+                            return ModifyRule.Wrap272OverflowR + tryChannel;
+                        }
+                        else
+                        {
+                            return ModifyRule.Wrap255OverflowR + tryChannel;
+                        }
+                    }
+                    else
+                    {
+                        return ModifyRule.OverflowR + tryChannel;
+                    }
+                }
+            }
+
+            return ModifyRule.Unknown;
+        }
+
+        bool CheckOverflow(int channel, byte[] RGB, ModifyRule[] rules, int[] parameters)
+        {
+            int newValue = RGB[channel] + parameters[channel];
+            switch (rules[channel])
+            {
+                case ModifyRule.Wrap255Add:
+                case ModifyRule.Wrap272Add:
+                    return newValue < 0 || newValue > 255;
+
+                case ModifyRule.Wrap255OverflowR:
+                case ModifyRule.Wrap272OverflowR:
+                    if (CheckOverflow(0, RGB, rules, parameters))
+                        return newValue < 0 || newValue > 255;
+                    else
+                        return false;
+
+                case ModifyRule.Wrap255OverflowG:
+                case ModifyRule.Wrap272OverflowG:
+                    if (CheckOverflow(1, RGB, rules, parameters))
+                        return newValue < 0 || newValue > 255;
+                    else
+                        return false;
+
+                case ModifyRule.Wrap255OverflowB:
+                case ModifyRule.Wrap272OverflowB:
+                    if (CheckOverflow(2, RGB, rules, parameters))
+                        return newValue < 0 || newValue > 255;
+                    else
+                        return false;
+
+                default:
+                    return false;
             }
         }
     }

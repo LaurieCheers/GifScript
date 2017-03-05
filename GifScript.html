@@ -14,12 +14,12 @@ GifScript has two data types: colors, and color cubes.
 <p>
 A color is a standard 3-byte RGB color, ranging from #000000 (pure black) to #FFFFFF (pure white).
 <p>
-A color cube is a 16x16x16 grid of colors. Entries from the grid are indexed by color, where red is the X axis, green is the Y axis, and blue is the Z axis. Since the cube is only 16 pixels wide, the lower 4 bits of each color are ignored for this. (In other words, any color between #303030 and #3F3F3F would address the same pixel - the one 3 across, 3 down, and 3 in. By convention we would say this is pixel #333333.)
+A color cube is a 16x16x16 grid of colors. Entries from the grid are indexed by color, where red is the X axis, green is the Y axis, and blue is the Z axis. Since the cube is only 16 pixels wide, the lower 4 bits of each color are ignored for this. (For example, any color between #102030 and #1F2F3F addresses the same pixel - the one 1 across, 2 down, and 3 in. By convention, we would call this pixel #112233.)
 <p>
 On disk, we store color cubes in the GIF file format: 16x16 pixel images, with the Z axis being represented by 16 frames.
 <p>
 <h3>Anatomy of a GifScript program</h3>
-Each GifScript program is a color cube. The GifScript interpreter reads it like a book - evaluating the top left pixel on the first frame, continuing to the right until it overflows to the next line, and so on. And when it finishes the first frame, it resumes at the top left pixel of the second frame, etc. If it gets all the way to position #FFFFFF, the program halts.
+Each GifScript program is a color cube. The GifScript interpreter reads it like a book - evaluating the first frame's top left pixel, continuing to the right until it overflows to the next line, and so on. And when it finishes the first frame, it resumes at the top left pixel of the second frame, etc. If it gets all the way to position #FFFFFF, the program halts.
 <p>
 Aside from the program itself, the interpreter maintains two important pieces of state -
 <p>
@@ -27,7 +27,7 @@ Aside from the program itself, the interpreter maintains two important pieces of
 <p>
 <b>Registers:</b> In GifScript you have access to 4096 registers (16x16x16), identified (you guessed it) by color. Each register points to a specific pixel within a specific color cube. Initially, each one points to position #000000 of its own unique pure black color cube, but you can load new cubes for them to point to, or make them point to each other's cubes.
 <p>
-One thing worth noting - at any given moment, one of the registers is the "running" register, and it points to the pixel that the interpreter will read next. By default, that's register #FFFFFF. In other words, when GifScript starts, register #FFFFFF points to the program cube, and setting its position changes what instruction is be executed next. ("Goto", in other words.)
+One thing worth noting - at any given moment, one of the registers is the "running" register, and it points to the pixel that the interpreter will read next. By default, that's register #FFFFFF. In other words, when GifScript starts, register #FFFFFF points to the program cube, and setting its position changes what instruction is be executed next. (in other words, this is a "Goto".)
 <p>
 Each register also has a filename (string) associated with it. By default this is just its color name (for example "ff0000.gif"). This is the filename used when loading and saving that register.
 <p>

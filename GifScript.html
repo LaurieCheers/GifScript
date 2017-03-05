@@ -82,15 +82,17 @@ GifScript has the following 12 special instruction colors:</p>
 <img src="gifscript_example2.png">
 <p>If you don't want to fail on overflow, show an example of the overflow behaviour you want! In this case we're overflowing into the (full) green channel, which in turn overflows into the red channel.</p>
 <p>
-Hopefully that has illustrated the kinds of operations that are possible with modifiers. To be precise, the system understands the following operations, and will try out each of these rules for each channel until it finds one that fits the examples it has been given. It will accept the first one it finds that works.
+Hopefully that has illustrated the kinds of operations that are possible with modifiers. To be precise, the system understands the following operations, and will try out each of these rules, in this order, (independently for each channel) until it finds one that fits the examples it has been given.
 </p>
 <table>
 <tr><td><i>None</i></td><td>The same value as before.</td></tr>
 <tr><td><i>Channel</i></td><td>The (old) value from another channel.</td></tr>
 <tr><td><i>Constant</i></td><td>Set to a specific value.</td></tr>
+<tr><td><i>Invert</i></td><td>255 minus the old value.</td></tr>
 <tr><td><i>Add</i></td><td>Increase (or decrease) by a constant; fail if the value overflows.</td></tr>
 <tr><td><i>Wrap Add</i></td><td>Increase (or decrease) by a constant; wrap around if the value overflows.</td></tr>
-<tr><td><i>Overflow</i></td><td>Increase or decrease by 1 when a specific Wrap Add or Overflow channel overflows.</td></tr>
+<tr><td><i>Overflow</i></td><td>Increase or decrease by a constant when another (specific) channel's Wrap Add or Wrap Overflow channel overflows. Fail if the value overflows.</td></tr>
+<tr><td><i>Wrap Overflow</i></td><td>Like Overflow, except it wraps around instead of failing when the value overflows.</td></tr>
 </table>
 </body>
 </html>

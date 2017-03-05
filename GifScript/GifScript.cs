@@ -11,7 +11,7 @@ namespace GifScript
     {
         static void Main(string[] args)
         {
-            GifImage gifImage = GifDecoder.Decode(@"..\..\..\Examples\Modifier.gif");
+            GifImage gifImage = GifDecoder.Decode(@"..\..\..\Examples\Helloworld.gif");
             ColorRGB[] globalPalette = ColorRGB.MakePalette(gifImage.GlobalColorTable);
             GifCube cube = new GifCube();
             byte sliceT = 0;

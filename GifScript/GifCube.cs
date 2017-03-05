@@ -1,108 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Drawing;
+using System.Drawing.Imaging;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace GifScript
 {
-    /*
-    public enum ColorDir
-    {
-        PlusR,
-        MinusR,
-        PlusG,
-        MinusG,
-        PlusB,
-        MinusB,
-    }
-
-    public static class ColorDirExtensions
-    {
-        public static bool CanStep(this ColorRGB position, ColorDir direction)
-        {
-            switch (direction)
-            {
-                case ColorDir.MinusR: return position.R > 0;
-                case ColorDir.MinusG: return position.G > 0;
-                case ColorDir.PlusR: return position.R < 255;
-                case ColorDir.PlusG: return position.G < 255;
-                case ColorDir.PlusB: return position.B > 0;
-                case ColorDir.MinusB: return position.B < 255;
-                default: throw new Exception();
-            }
-        }
-
-        public static ColorRGB Step(this ColorRGB position, ColorDir direction)
-        {
-            switch (direction)
-            {
-                case ColorDir.MinusR: return new ColorRGB((byte)(position.R-1), position.G, position.B);
-                case ColorDir.MinusG: return new ColorRGB(position.R, (byte)(position.G-1), position.B);
-                case ColorDir.PlusR: return new ColorRGB((byte)(position.R+1), position.G, position.B);
-                case ColorDir.PlusG: return new ColorRGB(position.R, (byte)(position.G+1), position.B);
-                case ColorDir.PlusB: return new ColorRGB(position.R, position.G, (byte)(position.B+1));
-                case ColorDir.MinusB: return new ColorRGB(position.R, position.G, (byte)(position.B-1));
-                default: throw new Exception();
-            }
-        }
-
-        public static ColorDir AnticlockwiseRG(this ColorDir d)
-        {
-            switch (d)
-            {
-                case ColorDir.MinusR: return ColorDir.PlusG;
-                case ColorDir.MinusG: return ColorDir.MinusR;
-                case ColorDir.PlusR: return ColorDir.MinusG;
-                case ColorDir.PlusG: return ColorDir.PlusR;
-                case ColorDir.PlusB: return ColorDir.PlusB;
-                case ColorDir.MinusB: return ColorDir.MinusB;
-                default: throw new Exception();
-            }
-        }
-
-        public static ColorDir ClockwiseRG(this ColorDir d)
-        {
-            switch (d)
-            {
-                case ColorDir.MinusR: return ColorDir.MinusG;
-                case ColorDir.MinusG: return ColorDir.PlusR;
-                case ColorDir.PlusR: return ColorDir.PlusG;
-                case ColorDir.PlusG: return ColorDir.MinusR;
-                case ColorDir.PlusB: return ColorDir.PlusB;
-                case ColorDir.MinusB: return ColorDir.MinusB;
-                default: throw new Exception();
-            }
-        }
-
-        public static ColorDir Negate(this ColorDir d)
-        {
-            switch(d)
-            {
-                case ColorDir.MinusR: return ColorDir.PlusR;
-                case ColorDir.MinusG: return ColorDir.PlusG;
-                case ColorDir.PlusR: return ColorDir.MinusR;
-                case ColorDir.PlusG: return ColorDir.MinusG;
-                case ColorDir.PlusB: return ColorDir.MinusB;
-                case ColorDir.MinusB: return ColorDir.PlusB;
-                default: throw new Exception();
-            }
-        }
-    }
-
-    public enum ColorCategory
-    {
-        Black,
-        White,
-        Red,
-        Green,
-        Blue,
-        Yellow,
-        Cyan,
-        Magenta,
-        Grey
-    }*/
-
     public struct ColorRGB
     {
         public readonly byte R;
@@ -132,7 +37,7 @@ namespace GifScript
             return R == 0 && G == 0 && B == 0;
         }
 
-        public int hexSignature { get { return R16 << 8 + G16 << 4 + B16; } }
+        public int hexSignature { get { return (R16 << 8) + (G16 << 4) + B16; } }
 
         public static ColorRGB Black = new ColorRGB(0, 0, 0);
         public static ColorRGB White = new ColorRGB(255, 255, 255);
@@ -300,106 +205,6 @@ namespace GifScript
             get { return pixels[index.R16, index.G16]; }
             set { pixels[index.R16, index.G16] = value; }
         }
-
-        /*
-        public int GetRegionShape(ColorRGB sourcePos)
-        {
-            ColorRGB regionColor = this[sourcePos];
-            int MAX_REGION_SIZE = 9;
-            HashSet<ColorRGB> seenPositions = new HashSet<ColorRGB>();
-            HashSet<ColorRGB> activePositions = new HashSet<ColorRGB>() { sourcePos };
-            HashSet<ColorRGB> nextActivePositions = new HashSet<ColorRGB>();
-            byte minR = sourcePos.R;
-            byte minG = sourcePos.G;
-            while (activePositions.Count > 0)
-            {
-                foreach (ColorRGB testPos in activePositions)
-                {
-                    seenPositions.Add(testPos);
-                    foreach (ColorRGB adjacentPos in testPos.GetAdjacentRGColors())
-                    {
-                        if(this[adjacentPos].Equals(regionColor) && !seenPositions.Contains(adjacentPos))
-                        {
-                            if (minR > adjacentPos.R)
-                                minR = adjacentPos.R;
-                            if (minG > adjacentPos.G)
-                                minG = adjacentPos.G;
-                            nextActivePositions.Add(adjacentPos);
-                        }
-                    }
-                }
-                activePositions = nextActivePositions;
-                nextActivePositions = new HashSet<ColorRGB>();
-                if (activePositions.Count + seenPositions.Count > MAX_REGION_SIZE)
-                {
-                    return 0;
-                }
-            }
-
-            int shape = 0;
-            foreach (ColorRGB pos in seenPositions)
-            {
-                int x = pos.R - minR;
-                int y = pos.G - minG;
-                int bit;
-                switch(x)
-                {
-                    case 0: bit = 1; break;
-                    case 1: bit = 2; break;
-                    case 2: bit = 4; break;
-                    default: return 0;
-                }
-                switch (y)
-                {
-                    case 0: break;
-                    case 1: bit *= 8; break;
-                    case 2: bit *= 64; break;
-                    default: return 0;
-                }
-
-                shape |= bit;
-                bit *= 2;
-            }
-            return shape;
-        }
-
-        public bool FollowEdge(ColorRGB startPos, ColorDir startFacing, out ColorRGB endPos, out ColorDir endFacing)
-        {
-            ColorRGB regionColor = this[startPos];
-            ColorRGB currentPos = startPos;
-            ColorDir currentFacing = startFacing.ClockwiseRG();
-
-            while (true)
-            {
-                ColorRGB nextPos = currentPos.Step(currentFacing);
-                ColorRGB nextColor = this[nextPos];
-
-                if (nextPos.Equals(startPos) && currentFacing == startFacing)
-                {
-                    // we're back at the start: failed to find anything
-                    endPos = startPos;
-                    endFacing = startFacing;
-                    return false;
-                }
-                else if (nextColor.Equals(regionColor))
-                {
-                    // found a position to keep looking from
-                    currentPos = nextPos;
-                    currentFacing = currentFacing.AnticlockwiseRG();
-                }
-                else if (nextColor.IsBlack())
-                {
-                    currentFacing = currentFacing.ClockwiseRG();
-                }
-                else
-                {
-                    // found a new adjacent region!
-                    endPos = nextPos;
-                    endFacing = currentFacing.Negate();
-                    return true;
-                }
-            }
-        }*/
     }
 
     public class GifCube
@@ -410,12 +215,6 @@ namespace GifScript
         {
             slices[T] = slice;
         }
-
-        /*
-        public int GetRegionShape(ColorRGB sourcePos)
-        {
-            return slices[sourcePos.B].GetRegionShape(sourcePos);
-        }*/
 
         public ColorRGB this[ColorRGB index]
         {
@@ -448,11 +247,36 @@ namespace GifScript
             }
         }
 
-        /*
-        public bool FollowEdge(ColorRGB startPos, ColorDir startFacing, out ColorRGB endPos, out ColorDir endFacing)
+        public void Save(string filename)
         {
-            return slices[startPos.B].FollowEdge(startPos, startFacing, out endPos, out endFacing);
-        }*/
+            Bitmap bmp = new Bitmap(256, 256, PixelFormat.Format24bppRgb);
+            Rectangle rect = new Rectangle(0, 0, bmp.Width, bmp.Height);
+            BitmapData bmpData = bmp.LockBits(rect, ImageLockMode.ReadWrite, bmp.PixelFormat);
+
+            // Declare an array to hold the bytes of the bitmap.
+            int numBytes = Math.Abs(bmpData.Stride) * bmp.Height;
+            byte[] rgbValues = new byte[numBytes];
+            int Idx = 0;
+            for (int Y = 0; Y < 256; Y++)
+            {
+                for (int X = 0; X < 256; X++)
+                {
+                    ColorRGB col = this[new ColorRGB((byte)X, (byte)Y, 0)];
+                    rgbValues[Idx++] = col.B;
+                    rgbValues[Idx++] = col.G;
+                    rgbValues[Idx++] = col.R;
+                }
+            }
+
+            // Copy the RGB values back to the bitmap
+            System.Runtime.InteropServices.Marshal.Copy(rgbValues, 0, bmpData.Scan0, numBytes);
+
+            // Unlock the bits.
+            bmp.UnlockBits(bmpData);
+
+            //@"C:\Users\Laurie\Pictures\fillpinkOUT.gif"
+            bmp.Save(filename, ImageFormat.Gif);
+        }
     }
 
     public interface IGifValue
@@ -514,77 +338,37 @@ namespace GifScript
         }
     }
 
-    /*
-    public class GifValue_Modified : IGifValue
-    {
-        IGifValue basis;
-
-        public GifValue_Modified(IGifValue basis, ColorRGB[] modifyExamples, out bool overflow)
-        {
-            this.basis = basis;
-            overflow = false;
-        }
-
-        public IGifValue Copy()
-        {
-            return new GifValue_Modified(basis);
-        }
-
-        public ColorRGB Read()
-        {
-            return Modify(basis.Read());
-        }
-
-        public void Write(ColorRGB color, out bool error)
-        {
-            bool error1;
-            bool error2;
-
-            basis.Write(InverseModify(color, out error1), out error2);
-            error = error1 || error2;
-        }
-
-        public ColorRGB Modify(ColorRGB color)
-        {
-            //TODO: apply the modifier properly
-            return ColorRGB.Black;
-        }
-
-        public ColorRGB InverseModify(ColorRGB color, out bool error)
-        {
-            error = false;
-            return ColorRGB.White;
-        }
-    }*/
-
     class GifStackFrame
     {
-        public readonly ColorRGB returnPosition;
         public readonly IGifValue LHSValue;
         public readonly int RHSInstruction;
+        public readonly ColorRGB runningRegister;
 
-        public GifStackFrame(ColorRGB returnPosition)
+        public GifStackFrame(ColorRGB runningRegister)
         {
-            this.returnPosition = returnPosition;
+            this.runningRegister = runningRegister;
             this.RHSInstruction = 0;
         }
 
-        public GifStackFrame(IGifValue LHSValue, int RHSInstruction)
+        public GifStackFrame(IGifValue LHSValue, int RHSInstruction, ColorRGB runningRegister)
         {
             this.LHSValue = LHSValue.Copy();
             this.RHSInstruction = RHSInstruction;
+            this.runningRegister = runningRegister;
         }
     }
 
     public class GifScriptState
     {
         GifCube program;
+        ColorRGB runningRegister;
         GifCube registerPositions = new GifCube();
         GifCube[,,] registerTargets = new GifCube[16, 16, 16];
+        string[,,] registerNames = new string[16, 16, 16];
         IGifValue current;
         bool literalMode;
         Stack<GifStackFrame> stack;
-        bool halted;
+        public bool halted { get; private set; }
 
         public void Init(GifCube program)
         {
@@ -602,8 +386,9 @@ namespace GifScript
                 }
             }
 
-            registerTargets[15, 15, 15] = program;
-            registerTargets[0, 0, 15] = registerPositions;
+            runningRegister = ColorRGB.White;
+            registerTargets[runningRegister.R16, runningRegister.G16, runningRegister.B16] = program;
+            registerTargets[8, 8, 8] = registerPositions;
             current = new GifValue_Readonly(ColorRGB.Black);
             halted = false;
             literalMode = false;
@@ -614,13 +399,13 @@ namespace GifScript
             if (halted)
                 return;
 
-            ColorRGB programPosition = registerPositions[ColorRGB.White];
-            ColorRGB instruction = program[programPosition];
+            ColorRGB programPosition = registerPositions[runningRegister];
+            ColorRGB instruction = registerTargets[runningRegister.R16, runningRegister.G16, runningRegister.B16][programPosition];
             ColorRGB currentColor = current.Read();
 
             // point to the next instruction
             bool overflow;
-            registerPositions[ColorRGB.White] = registerPositions[ColorRGB.White].Increment(out overflow);
+            registerPositions[runningRegister] = registerPositions[runningRegister].AddOffset(16, out overflow);
 
             if(overflow)
             {
@@ -638,21 +423,22 @@ namespace GifScript
                 switch (instruction.hexSignature)
                 {
                     case 0x000: // Return
-                        DoReturn(currentColor);
+                        DoReturn(current);
                         break;
                     case 0x080: // Assign
-                        stack.Push(new GifStackFrame(current, 0x080));
+                        stack.Push(new GifStackFrame(current, 0x080, runningRegister));
                         break;
                     case 0x0C0: // Call
-                        stack.Push(new GifStackFrame(current, 0x0C0));
+                        stack.Push(new GifStackFrame(current, 0x0C0, runningRegister));
                         break;
 
                     case 0xC00: // Load GIF
                         break;
                     case 0xC80: // Save GIF
+                        registerTargets[currentColor.R16, currentColor.G16, currentColor.B16].Save(GetRegisterName(currentColor)+".gif");
                         break;
                     case 0xCC0: // Retarget
-                        stack.Push(new GifStackFrame(current, 0xCC0));
+                        stack.Push(new GifStackFrame(current, 0xCC0, runningRegister));
                         break;
 
                     case 0x00C: // RegisterPos
@@ -667,19 +453,19 @@ namespace GifScript
 
                     case 0xC0C: // Modify
                         bool failed;
+                        registerPositions[runningRegister] = registerPositions[runningRegister] + new ColorRGB(48, 0, 0);
                         current = Modify(currentColor,
                             new ColorRGB[] {
-                                program[programPosition + new ColorRGB(0, 16, 0)],
-                                program[programPosition + new ColorRGB(0, 32, 0)],
-                                program[programPosition + new ColorRGB(0, 48, 0)],
-                                program[programPosition + new ColorRGB(0, 64, 0)]
+                                program[programPosition + new ColorRGB(16, 0, 0)],
+                                program[programPosition + new ColorRGB(32, 0, 0)],
+                                program[programPosition + new ColorRGB(48, 0, 0)]
                             },
                             out failed
                         );
 
                         if(failed)
                         {
-                            DoReturn(currentColor);
+                            DoReturn(current);
                         }
                         break;
                     case 0xC8C: // Name
@@ -695,7 +481,21 @@ namespace GifScript
             }
         }
 
-        void DoReturn(ColorRGB returnColor)
+        string GetRegisterName(ColorRGB registerId)
+        {
+            string name = registerNames[registerId.R16, registerId.G16, registerId.B16];
+            if (name != null)
+                return name;
+
+            return "" + GetHexChar(registerId.R16) + GetHexChar(registerId.R16) + GetHexChar(registerId.G16) + GetHexChar(registerId.G16) + GetHexChar(registerId.B16) + GetHexChar(registerId.B16);
+        }
+
+        char GetHexChar(byte C16)
+        {
+            return "0123456789abcdef"[C16];
+        }
+
+        void DoReturn(IGifValue returnValue)
         {
             if (stack.Count == 0)
             {
@@ -705,94 +505,52 @@ namespace GifScript
             else
             {
                 GifStackFrame returnFrame = stack.Pop();
+                runningRegister = returnFrame.runningRegister;
+
                 switch (returnFrame.RHSInstruction)
                 {
                     case 0x080: // Assign
                         bool failure;
-                        returnFrame.LHSValue.Write(returnColor, out failure);
+                        returnValue.Write(returnFrame.LHSValue.Read(), out failure);
                         if(failure)
                         {
-                            DoReturn(returnColor);
+                            DoReturn(returnValue);
                         }
                         break;
                     case 0x0C0: // Call
-                        stack.Push(new GifStackFrame(registerPositions[ColorRGB.White]));
-                        registerPositions[ColorRGB.White] = returnFrame.LHSValue.Read();
+                        stack.Push(new GifStackFrame(returnFrame.runningRegister));
+                        runningRegister = returnValue.Read();
                         break;
                     case 0xCC0: // Retarget
                         ColorRGB lhsColor = returnFrame.LHSValue.Read();
-                        registerTargets[lhsColor.R16, lhsColor.G16, lhsColor.B16] = registerTargets[returnColor.R16, returnColor.G16, returnColor.B16];
+                        ColorRGB rhsColor = returnValue.Read();
+                        registerTargets[rhsColor.R16, rhsColor.G16, rhsColor.B16] = registerTargets[lhsColor.R16, lhsColor.G16, lhsColor.B16];
                         break;
                     default:
-                        registerPositions[ColorRGB.White] = returnFrame.returnPosition;
                         break;
                 }
             }
         }
 
-        /*
-        GifStackFrame stackCurrent = stack.Last();
-        ColorRGB regionColor = stackCurrent.program[stackCurrent.position];
-        int shape = stackCurrent.program.GetRegionShape(stackCurrent.position);
-        switch( shape )
+        enum ModifyRule
         {
-            // identify target colour and region shape, and execute the corresponding instruction
-            case 1: // copy pixel
-                CopyPixel(regionColor.ToCategory());
-                break;
-            case (1 + 2 + 4) + (8) + (64): // for each pixel
-                ForEachPixel(regionColor.ToCategory());
-                break;
-            case (1 + 2 + 4) + (8 + 16 + 32) + (64 + 128 + 256): // for each pixel
-                ForEachPixel(regionColor.ToCategory());
-                break;
-        }
-
-        stackCurrent.NextCommand();
-    */
-
-        /*public void CopyPixel(ColorCategory category)
-        {
-            switch(category)
-            {
-                case ColorCategory.Red: output.Write(input.Read()); break;
-                case ColorCategory.Green:
-                    {
-                        GifStackFrame newStack = stack.Last().GetFrameForNextCommand();
-                        output.Write(newStack.cursor.Read());
-                        break;
-                    }
-            }
-        }
-
-        public void ForEachPixel(ColorCategory category)
-        {
-            switch (category)
-            {
-                case ColorCategory.Red: ForEachPixel(ref input); break;
-                case ColorCategory.Blue: ForEachPixel(ref output); break;
-            }
-        }
-
-        public void ForEachPixel(ref GifCursor cursor)
-        {
-            GifStackFrame newStack = stack.Last().GetFrameForNextCommand();
-            for (int x = 0; x < 256; ++x)
-            {
-                for (int y = 0; y < 256; ++y)
-                {
-                    cursor.position = new ColorRGB((byte)x, (byte)y, cursor.position.B);
-                    stack.Add(newStack);
-                    Tick();
-                }
-            }
-        }*/
+            Unknown,
+            CopyR,
+            CopyG,
+            CopyB,
+            SetConstant,
+            Add,
+            WrapAdd,
+            OverflowR,
+            OverflowG,
+            OverflowB
+        };
 
         IGifValue Modify(ColorRGB value, ColorRGB[] modifyExamples, out bool error)
         {
             //Given a sequence of example values, extrapolate the rule that's generating the sequence, and apply it to our value.
 
-            // first step: if value is one of the examples, return the next example.
+            // first step: if value is one of the examples, don't bother. We know exactly what to return.
             for(int Idx = 0; Idx < modifyExamples.Length-1; ++Idx)
             {
                 if (modifyExamples[Idx].Equals(value))
@@ -802,23 +560,92 @@ namespace GifScript
                 }
             }
 
-            int offset = modifyExamples[0].GetOffsetTo(modifyExamples[1]);
-            bool additiveWorks = true;
-            for (int Idx = 2; Idx < modifyExamples.Length; ++Idx)
+            ModifyRule[] rules = new ModifyRule[3];
+            int[] parameters = new int[3];
+            rules[0] = DeduceModifyRule(new byte[] { modifyExamples[0].R, modifyExamples[1].R, modifyExamples[2].R }, modifyExamples, ModifyRule.CopyR, ref parameters[0]);
+            rules[1] = DeduceModifyRule(new byte[] { modifyExamples[0].G, modifyExamples[1].G, modifyExamples[2].G }, modifyExamples, ModifyRule.CopyG, ref parameters[1]);
+            rules[2] = DeduceModifyRule(new byte[] { modifyExamples[0].B, modifyExamples[1].B, modifyExamples[2].B }, modifyExamples, ModifyRule.CopyB, ref parameters[2]);
+
+            //TODO: if we have at least one ModifyRule.Unknown and at least one ModifyRule.WrapAdd, try inserting some Overflow rules.
+
+            bool errorR, errorG, errorB;
+            byte R = ApplyRule(value.R, value, rules[0], parameters[0], out errorR);
+            byte G = ApplyRule(value.G, value, rules[1], parameters[1], out errorG);
+            byte B = ApplyRule(value.B, value, rules[2], parameters[2], out errorB);
+
+            error = errorR || errorG || errorB;
+            return new GifValue_Readonly(new ColorRGB(R, G, B));
+        }
+
+        ModifyRule DeduceModifyRule(byte[] examples, ColorRGB[] allChannels, ModifyRule unchangedRule, ref int parameter)
+        {
+            if (examples[0] == examples[1] && examples[0] == examples[2])
+                return unchangedRule;
+
+            if (examples[1] == allChannels[0].R && examples[2] == allChannels[1].R)
+                return ModifyRule.CopyR;
+
+            if (examples[1] == allChannels[0].G && examples[2] == allChannels[1].G)
+                return ModifyRule.CopyG;
+
+            if (examples[1] == allChannels[0].B && examples[2] == allChannels[1].B)
+                return ModifyRule.CopyB;
+
+            if (examples[1] == examples[2])
             {
-                if(modifyExamples[Idx-1].GetOffsetTo(modifyExamples[Idx]) != offset)
-                {
-                    additiveWorks = false;
-                    break;
-                }
-            }
-            if(additiveWorks)
-            {
-                return new GifValue_Readonly(value.AddOffset(offset, out error));
+                parameter = examples[1];
+                return ModifyRule.SetConstant;
             }
 
+            if (examples[1]-examples[0] == examples[2]-examples[1])
+            {
+                parameter = examples[1]-examples[0];
+                return ModifyRule.Add;
+            }
+
+            if ((examples[1]+256 - examples[0])%256 == (examples[2]+256 - examples[1])%256)
+            {
+                parameter = (examples[1]+256 - examples[0])%256;
+                if (parameter > 127)
+                    parameter -= 256;
+                return ModifyRule.WrapAdd;
+            }
+
+            return ModifyRule.Unknown;
+        }
+
+        byte ApplyRule(byte channel, ColorRGB input, ModifyRule rule, int parameter, out bool error)
+        {
             error = false;
-            return new GifValue_Readonly(ColorRGB.Black);
+
+            switch (rule)
+            {
+                case ModifyRule.CopyR:
+                    return input.R;
+                case ModifyRule.CopyG:
+                    return input.G;
+                case ModifyRule.CopyB:
+                    return input.B;
+                case ModifyRule.SetConstant:
+                    return (byte)parameter;
+                case ModifyRule.Add:
+                    {
+                        int result = channel + parameter;
+                        if (result < 0 || result > 255)
+                        {
+                            error = true;
+                        }
+                        return (byte)result;
+                    }
+                case ModifyRule.WrapAdd:
+                    {
+                        int result = channel + parameter;
+                        return (byte)result;
+                    }
+                default:
+                    error = true;
+                    return 0;
+            }
         }
     }
 }

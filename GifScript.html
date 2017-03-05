@@ -38,10 +38,10 @@ GifScript has the following 12 special instruction colors:</p>
 <ul>
 <li><h3>Return (<span style="color:#000000">#000000</span>)</h3>Return the current color from the current function. If we're not currently in a function, terminate.</p>
 <p>NB: All the instructions below that "evaluate the right-hand side" do so by executing the right-hand side like a function. In other words, it will run the right-hand side code until it hits a "return" instruction, then go back to evaluate the instruction that was expecting a right-hand side value, and then resume execution after that return instruction.</p></li></li>
-<li><h3>Assign (<span style="color:#008800">#008800</span>)</h3><code>current-color.pixel = right-hand-side</code>
-<p>Set the contents of the selected pixel to the result of evaluating the right-hand side. (If that pixel is not assignable, return instead).</p></li>
-<li><h3>Call (<span style="color:#00CC00">#00CC00</span>)</h3><code>right-hand-side.register.call(current-color)</code>
-<p>Evaluate the right-hand side, and call the register it selects as a function.</p></li>
+<li><h3>Assign (<span style="color:#008800">#008800</span>)</h3><code>right-hand-side.pixel = current-color</code>
+<p>Evaluate the right-hand side. Write the current color into that pixel's contents. (If that pixel is not assignable, return instead).</p></li>
+<li><h3>Call (<span style="color:#00CC00">#00CC00</span>)</h3><code>right-hand-side.register.call()</code>
+<p>Evaluate the right-hand side. That register becomes the running register. (Until it returns). The current color is unaffected.</p></li>
 <li><h3>Load (<span style="color:#CC0000">#CC0000</span>)</h3>
 <code>current-color.register.load(current-color.register.filename)</code>
 <p>Load a gif into the selected register.</p></li>
@@ -49,8 +49,8 @@ GifScript has the following 12 special instruction colors:</p>
 <code>current-color.register.save(current-color.register.filename)</code>
 <p>Save the selected register as a gif.</p></li>
 <li><h3>Retarget (<span style="color:#CCCC00">#CCCC00</span>)</h3>
-<code>current-color.register.cube = right-hand-side.register.cube</code>
-<p>Point the selected register to the result of evaluating the right hand side.</p></li>
+<code>right-hand-side.register.cube = current-color.register.cube</code>
+<p>Evaluate the right-hand side. Make that register point to the current-color register's color cube.</p></li>
 <li><h3>RegisterPos (<span style="color:#0000CC">#0000CC</span>)</h3>
 <code>current-color = current-color.register.position</code><br>
 <p>Get the position of the selected register. (Assigning to this value will move the register.)</p></li>
@@ -81,5 +81,16 @@ GifScript has the following 12 special instruction colors:</p>
 <h4>Example 2:</h4>
 <img src="gifscript_example2.png">
 <p>If you don't want to fail on overflow, show an example of the overflow behaviour you want! In this case we're overflowing into the (full) green channel, which in turn overflows into the red channel.</p>
+<p>
+Hopefully that has illustrated the kinds of operations that are possible with modifiers. To be precise, the system understands the following operations, and will try out each of these rules for each channel until it finds one that fits the examples it has been given. It will accept the first one it finds that works.
+</p>
+<table>
+<tr><td><i>None</i></td><td>The same value as before.</td></tr>
+<tr><td><i>Channel</i></td><td>The (old) value from another channel.</td></tr>
+<tr><td><i>Constant</i></td><td>Set to a specific value.</td></tr>
+<tr><td><i>Add</i></td><td>Increase (or decrease) by a constant; fail if the value overflows.</td></tr>
+<tr><td><i>Wrap Add</i></td><td>Increase (or decrease) by a constant; wrap around if the value overflows.</td></tr>
+<tr><td><i>Overflow</i></td><td>Increase or decrease by 1 when a specific Wrap Add or Overflow channel overflows.</td></tr>
+</table>
 </body>
 </html>

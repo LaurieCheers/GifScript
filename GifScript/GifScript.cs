@@ -11,7 +11,7 @@ namespace GifScript
     {
         static void Main(string[] args)
         {
-            GifImage gifImage = GifDecoder.Decode(@"..\..\..\Examples\docexample.gif");
+            GifImage gifImage = GifDecoder.Decode(@"..\..\..\Examples\worldmap2.gif");
             ColorRGB[] globalPalette = ColorRGB.MakePalette(gifImage.GlobalColorTable);
             GifCube cube = new GifCube();
             byte sliceT = 0;
@@ -24,7 +24,7 @@ namespace GifScript
                 else
                     palette = ColorRGB.MakePalette(colorTableBytes);
 
-                AddFrame(cube, sliceT, f.IndexedPixel, gifImage.Width, palette);
+                cube.AddFrame(sliceT, new GifCubeSlice(f.IndexedPixel, gifImage.Width, palette));
             }
 
             GifScriptState scriptState = new GifScriptState();
@@ -33,38 +33,6 @@ namespace GifScript
             {
                 scriptState.Tick();
             }
-
-            /*
-                        Color32[] pallette = new OcTreeQuantizer(8).Quantizer(bmp);
-                        GifHelper.Quantizer(bmp, pallette);
-
-                        GifImage resultImage = new GifImage
-                        {
-                            Frames = new List<GifFrame>()
-                            {
-                                new GifFrame() {
-                                    Image = bmp,
-                                    ImageDescriptor = new ImageDescriptor
-                                    {
-                                        LctFlag = false,//true,
-                                        LctSize = pallette.Length,
-                                        Width = 256,
-                                        Height = 256,
-                                    }
-                                }
-                            },
-                            LogicalScreenDescriptor = new LogicalScreenDescriptor
-                            {
-                                Width = 256,
-                                Height = 256,
-                            }
-                        };
-                        GifEncoder.Encode(resultImage, @"C:\Users\Laurie\Pictures\fillpinkOUT.gif");*/
-        }
-
-        public static void AddFrame(GifCube cube, byte sliceT, byte[] pixels, short width, ColorRGB[] palette)
-        {
-            cube.AddFrame(sliceT, new GifCubeSlice(pixels, width, palette));
         }
     }
 }

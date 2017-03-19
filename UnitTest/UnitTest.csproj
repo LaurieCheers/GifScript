@@ -59,9 +59,9 @@
       <Project>{cfdcacd9-33af-499c-a9f5-6e6bd1dbac35}</Project>
       <Name>GifUtility</Name>
     </ProjectReference>
-    <ProjectReference Include="..\GifScript\GifScript.csproj">
+    <ProjectReference Include="..\GifScript\GifScriptCommandLine.csproj">
       <Project>{bdefc1c6-8868-4abc-bd51-a3fd22092c85}</Project>
-      <Name>GifScript</Name>
+      <Name>GifScriptCommandLine</Name>
     </ProjectReference>
   </ItemGroup>
   <Choose>

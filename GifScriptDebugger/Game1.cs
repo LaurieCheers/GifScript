@@ -33,6 +33,11 @@ namespace GifScriptDebugger
         Texture2D pointerTexture;
         Texture2D runningTexture;
         Texture2D breakpointTexture;
+        Texture2D runTexture;
+        Texture2D stepInTexture;
+        Texture2D stepOverTexture;
+        Texture2D stepOutTexture;
+        Texture2D restartTexture;
         GifScriptState gifScriptState = new GifScriptState();
         InputState inputState = new InputState();
 
@@ -42,6 +47,8 @@ namespace GifScriptDebugger
         Vector2 blockSize = new Vector2(50, 35);
         Vector2 registersScreenPos = new Vector2(850, 140);
         float registersScreenSpacing = 35 + 5;
+
+        UIContainer ui;
 
         public Game1()
         {
@@ -80,14 +87,21 @@ namespace GifScriptDebugger
             pointerTexture = Content.Load<Texture2D>("pointer");
             runningTexture = Content.Load<Texture2D>("running");
             breakpointTexture = Content.Load<Texture2D>("breakpoint");
+            runTexture = Content.Load<Texture2D>("run");
+            stepInTexture = Content.Load<Texture2D>("stepin");
+            stepOverTexture = Content.Load<Texture2D>("stepover");
+            stepOutTexture = Content.Load<Texture2D>("stepout");
+            restartTexture = Content.Load<Texture2D>("restart");
 
-            NGif.GifDecoder decoder = new NGif.GifDecoder();
-            if (decoder.Read("../../../../../Examples/worldmap2.gif") == 0)
-            {
-                gifScriptState.Init( new GifCube(decoder) );
-                AddInterestingRegister(gifScriptState.runningRegister);
-                ShowRegister(gifScriptState.runningRegister);
-            }
+            ui = new UIContainer();
+            UIButtonStyle defaultButtonStyle = UIButton.GetDefaultStyle(Content);
+            ui.Add(new UIButton("Run (F5)", runTexture, new Rectangle(100, 650, 120, 40), defaultButtonStyle, DoRun));
+            ui.Add(new UIButton("Step In (F11)", stepInTexture, new Rectangle(240, 650, 120, 40), defaultButtonStyle, DoStepIn));
+            ui.Add(new UIButton("Step Over (F10)", stepOverTexture, new Rectangle(380, 650, 120, 40), defaultButtonStyle, DoStepOver));
+            ui.Add(new UIButton("Step Out (^F11)", stepOutTexture, new Rectangle(520, 650, 120, 40), defaultButtonStyle, DoStepOut));
+            ui.Add(new UIButton("Restart", restartTexture, new Rectangle(660, 650, 120, 40), defaultButtonStyle, DoRestart));
+
+            DoRestart();
         }
 
         /// <summary>
@@ -107,45 +121,29 @@ namespace GifScriptDebugger
         protected override void Update(GameTime gameTime)
         {
             inputState.Update();
+            inputState.hoveringElement = ui.GetMouseHover(inputState.MousePos);
+            ui.Update(inputState);
 
             if(inputState.WasKeyJustReleased(Keys.F11))
             {
                 if (inputState.IsKeyDown(Keys.LeftShift) || inputState.IsKeyDown(Keys.RightShift))
                 {
-                    int targetStackSize = gifScriptState.stack.Count - 1;
-                    do
-                    {
-                        gifScriptState.Tick();
-                        UpdateToScriptState();
-                    }
-                    while (!gifScriptState.halted && !HitBreakpoint() && gifScriptState.stack.Count > targetStackSize);
+                    DoStepOut();
                 }
                 else
                 {
-                    gifScriptState.Tick();
-                    UpdateToScriptState();
+                    DoStepIn();
                 }
             }
 
             if (inputState.WasKeyJustReleased(Keys.F10))
             {
-                int targetStackSize = gifScriptState.stack.Count;
-                do
-                {
-                    gifScriptState.Tick();
-                    UpdateToScriptState();
-                }
-                while (!gifScriptState.halted && !HitBreakpoint() && gifScriptState.stack.Count > targetStackSize);
+                DoStepOver();
             }
 
             if (inputState.WasKeyJustReleased(Keys.F5))
             {
-                do
-                {
-                    gifScriptState.Tick();
-                    UpdateToScriptState();
-                }
-                while (!gifScriptState.halted && !HitBreakpoint());
+                DoRun();
             }
 
             if (inputState.WasMouseLeftJustReleased())
@@ -201,6 +199,44 @@ namespace GifScriptDebugger
             }
 
             base.Update(gameTime);
+        }
+
+        void DoStepIn()
+        {
+            gifScriptState.Tick();
+            UpdateToScriptState();
+        }
+
+        void DoStepOut()
+        {
+            int targetStackSize = gifScriptState.stack.Count - 1;
+            do
+            {
+                gifScriptState.Tick();
+                UpdateToScriptState();
+            }
+            while (!gifScriptState.halted && !HitBreakpoint() && gifScriptState.stack.Count > targetStackSize);
+        }
+
+        void DoStepOver()
+        {
+            int targetStackSize = gifScriptState.stack.Count;
+            do
+            {
+                gifScriptState.Tick();
+                UpdateToScriptState();
+            }
+            while (!gifScriptState.halted && !HitBreakpoint() && gifScriptState.stack.Count > targetStackSize);
+        }
+
+        void DoRun()
+        {
+            do
+            {
+                gifScriptState.Tick();
+                UpdateToScriptState();
+            }
+            while (!gifScriptState.halted && !HitBreakpoint());
         }
 
         bool HitBreakpoint()
@@ -295,6 +331,8 @@ namespace GifScriptDebugger
 
                 registerDrawPos.Y += registersScreenSpacing;
             }
+
+            ui.Draw(spriteBatch);
 
             //            spriteBatch.Draw(whiteTexture, new Rectangle(100, 100, 100, 100), Color.Red);
             spriteBatch.End();
@@ -428,6 +466,19 @@ namespace GifScriptDebugger
         {
             spriteBatch.Draw(whiteTexture, pos.ToRectangle(size), color.ToXNAColor());
             spriteBatch.DrawString(font, GetHexString(color), pos, GetContrastingColor(color));
+        }
+
+        void DoRestart()
+        {
+            NGif.GifDecoder decoder = new NGif.GifDecoder();
+            if (decoder.Read("../../../../../Examples/worldmap2.gif") == 0)
+            {
+                gifScriptState = new GifScriptState();
+                gifScriptState.Init(new GifCube(decoder));
+
+                AddInterestingRegister(gifScriptState.runningRegister);
+                ShowRegister(gifScriptState.runningRegister);
+            }
         }
     }
 }

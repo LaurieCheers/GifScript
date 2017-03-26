@@ -38,6 +38,7 @@ namespace GifScriptDebugger
         Texture2D stepOverTexture;
         Texture2D stepOutTexture;
         Texture2D restartTexture;
+        Texture2D pinheadTexture;
         GifScriptState gifScriptState = new GifScriptState();
         InputState inputState = new InputState();
 
@@ -92,6 +93,7 @@ namespace GifScriptDebugger
             stepOverTexture = Content.Load<Texture2D>("stepover");
             stepOutTexture = Content.Load<Texture2D>("stepout");
             restartTexture = Content.Load<Texture2D>("restart");
+            pinheadTexture = Content.Load<Texture2D>("pinhead");
 
             ui = new UIContainer();
             UIButtonStyle defaultButtonStyle = UIButton.GetDefaultStyle(Content);
@@ -387,7 +389,7 @@ namespace GifScriptDebugger
         void DrawPointer(ColorRGB color, Vector2 pos, Vector2 size)
         {
             spriteBatch.Draw(pointerTexture, new Rectangle((int)(pos.X), (int)(pos.Y + size.Y-16), 16, 16), Color.White);
-            spriteBatch.Draw(whiteTexture, new Rectangle((int)(pos.X-8), (int)(pos.Y + size.Y - 8), 16, 16), color.ToXNAColor());
+            spriteBatch.Draw(pinheadTexture, new Rectangle((int)(pos.X-8), (int)(pos.Y + size.Y - 8), 16, 16), color.ToXNAColor());
         }
 
         void DrawCell(GifCube cube, int x, int y, int z, Vector2 pos, Vector2 size)
@@ -471,7 +473,7 @@ namespace GifScriptDebugger
         void DoRestart()
         {
             NGif.GifDecoder decoder = new NGif.GifDecoder();
-            if (decoder.Read("../../../../../Examples/colorcube2.gif") == 0)
+            if (decoder.Read("../../../../../Examples/rainbow.gif") == 0)
             {
                 gifScriptState = new GifScriptState();
                 gifScriptState.Init(new GifCube(decoder));

@@ -603,6 +603,7 @@ namespace GifScript
                         ColorRGB lhsColor = returnFrame.LHSValue.Read();
                         ColorRGB rhsColor = returnValue.Read();
                         registerTargets[rhsColor.R16, rhsColor.G16, rhsColor.B16] = registerTargets[lhsColor.R16, lhsColor.G16, lhsColor.B16];
+                        current = new GifCursor(rhsColor, GetRegisterPosition(rhsColor), GetRegisterTarget(rhsColor));
                         break;
                     default:
                         break;

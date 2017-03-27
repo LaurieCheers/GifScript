@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 14
-VisualStudioVersion = 14.0.25420.1
+# Visual Studio 15
+VisualStudioVersion = 15.0.26206.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GifScriptCommandLine", "GifScript\GifScriptCommandLine.csproj", "{BDEFC1C6-8868-4ABC-BD51-A3FD22092C85}"
 EndProject
@@ -13,7 +13,28 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NGif", "NGif\NGif.csproj", 
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GifScriptCore", "GifScriptCore\GifScriptCore.csproj", "{4A0D3B22-402C-4B50-952D-C21D2C287C37}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GifScriptDebugger", "GifScriptDebugger\GifScriptDebugger.csproj", "{84DA1C2E-BDB2-4048-83CB-96FF769D4A62}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GifScriptDebugger.Bridge", "GifScriptDebugger.Bridge\GifScriptDebugger.Bridge.csproj", "{753BD803-3072-4290-91CF-D1232293DFC3}"
+EndProject
+Project("{E24C65DC-7377-472B-9ABA-BC803B73C61A}") = "Bridge", "GifScriptDebugger.Bridge\Bridge\", "{67278EE4-C679-4242-9C88-93269DCCA872}"
+	ProjectSection(WebsiteProperties) = preProject
+		TargetFrameworkMoniker = ".NETFramework,Version%3Dv4.0"
+		Debug.AspNetCompiler.VirtualPath = "/localhost_51872"
+		Debug.AspNetCompiler.PhysicalPath = "GifScriptDebugger.Bridge\Bridge\"
+		Debug.AspNetCompiler.TargetPath = "PrecompiledWeb\localhost_51872\"
+		Debug.AspNetCompiler.Updateable = "true"
+		Debug.AspNetCompiler.ForceOverwrite = "true"
+		Debug.AspNetCompiler.FixedNames = "false"
+		Debug.AspNetCompiler.Debug = "True"
+		Release.AspNetCompiler.VirtualPath = "/localhost_51872"
+		Release.AspNetCompiler.PhysicalPath = "GifScriptDebugger.Bridge\Bridge\"
+		Release.AspNetCompiler.TargetPath = "PrecompiledWeb\localhost_51872\"
+		Release.AspNetCompiler.Updateable = "true"
+		Release.AspNetCompiler.ForceOverwrite = "true"
+		Release.AspNetCompiler.FixedNames = "false"
+		Release.AspNetCompiler.Debug = "False"
+		VWDPort = "51872"
+		SlnRelativePath = "GifScriptDebugger.Bridge\Bridge\"
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -63,13 +84,22 @@ Global
 		{4A0D3B22-402C-4B50-952D-C21D2C287C37}.Release|Any CPU.Build.0 = Release|Any CPU
 		{4A0D3B22-402C-4B50-952D-C21D2C287C37}.Release|x86.ActiveCfg = Release|Any CPU
 		{4A0D3B22-402C-4B50-952D-C21D2C287C37}.Release|x86.Build.0 = Release|Any CPU
-		{84DA1C2E-BDB2-4048-83CB-96FF769D4A62}.Debug|Any CPU.ActiveCfg = Debug|x86
-		{84DA1C2E-BDB2-4048-83CB-96FF769D4A62}.Debug|Any CPU.Build.0 = Debug|x86
-		{84DA1C2E-BDB2-4048-83CB-96FF769D4A62}.Debug|x86.ActiveCfg = Debug|x86
-		{84DA1C2E-BDB2-4048-83CB-96FF769D4A62}.Debug|x86.Build.0 = Debug|x86
-		{84DA1C2E-BDB2-4048-83CB-96FF769D4A62}.Release|Any CPU.ActiveCfg = Release|x86
-		{84DA1C2E-BDB2-4048-83CB-96FF769D4A62}.Release|x86.ActiveCfg = Release|x86
-		{84DA1C2E-BDB2-4048-83CB-96FF769D4A62}.Release|x86.Build.0 = Release|x86
+		{753BD803-3072-4290-91CF-D1232293DFC3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{753BD803-3072-4290-91CF-D1232293DFC3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{753BD803-3072-4290-91CF-D1232293DFC3}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{753BD803-3072-4290-91CF-D1232293DFC3}.Debug|x86.Build.0 = Debug|Any CPU
+		{753BD803-3072-4290-91CF-D1232293DFC3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{753BD803-3072-4290-91CF-D1232293DFC3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{753BD803-3072-4290-91CF-D1232293DFC3}.Release|x86.ActiveCfg = Release|Any CPU
+		{753BD803-3072-4290-91CF-D1232293DFC3}.Release|x86.Build.0 = Release|Any CPU
+		{67278EE4-C679-4242-9C88-93269DCCA872}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{67278EE4-C679-4242-9C88-93269DCCA872}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{67278EE4-C679-4242-9C88-93269DCCA872}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{67278EE4-C679-4242-9C88-93269DCCA872}.Debug|x86.Build.0 = Debug|Any CPU
+		{67278EE4-C679-4242-9C88-93269DCCA872}.Release|Any CPU.ActiveCfg = Debug|Any CPU
+		{67278EE4-C679-4242-9C88-93269DCCA872}.Release|Any CPU.Build.0 = Debug|Any CPU
+		{67278EE4-C679-4242-9C88-93269DCCA872}.Release|x86.ActiveCfg = Debug|Any CPU
+		{67278EE4-C679-4242-9C88-93269DCCA872}.Release|x86.Build.0 = Debug|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

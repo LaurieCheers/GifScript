@@ -50,14 +50,14 @@ namespace GifScriptDebugger
 
         public Game1()
         {
-            Document.Body.OnKeyUp = e =>
+            Document.Body.AddEventListener(EventType.KeyUp, e =>
             {
                 keyUps.Add(e.CharCode);
-            };
-            Document.Body.OnKeyDown = e =>
+            });
+            Document.Body.AddEventListener(EventType.KeyDown, e =>
             {
                 keyDowns.Add(e.CharCode);
-            };
+            });
             canvas.OnMouseDown = e =>
             {
                 mousePoint = new Point(
@@ -309,7 +309,7 @@ namespace GifScriptDebugger
         public void DrawString (string text, Vector2 position, Color color)
         {
             context.FillStyle = color.JavascriptColor;
-            context.FillText(text, (int)position.X, (int)position.Y);
+            context.FillText(text, (int)position.X, (int)position.Y + 14);
         }
         
         public void DrawRectangle (Rectangle rectangle, Color color)
@@ -371,8 +371,10 @@ namespace GifScriptDebugger
             {
                 DrawString("" + GetHexChar(y), new Vector2(pos.X - 16, pos.Y + 10 + y*size.Y), new Color(0, y * 16, 0));
             }
-            DrawRectangle(pos.ToRectangle(size*16), Color.Black);
-            DrawRectangle(new Vector2(pos.X + highlightPos.R16*size.X - 1, pos.Y + highlightPos.G16 * size.Y - 1).ToRectangle(new Vector2(size.X+2, size.Y+2)), Color.White);
+            Vector2 size_ = size;
+            DrawRectangle(pos.ToRectangle(size_*16), Color.Black);
+            size_ = size;
+            DrawRectangle(new Vector2(pos.X + highlightPos.R16*size_.X - 1, pos.Y + highlightPos.G16 * size_.Y - 1).ToRectangle(new Vector2(size_.X+2, size_.Y+2)), Color.White);
             for (int x = 0; x < 16; ++x)
             {
                 for (int y = 0; y < 16; ++y)
@@ -416,8 +418,8 @@ namespace GifScriptDebugger
 
         void DrawCell(GifCube cube, int x, int y, int z, Vector2 pos, Vector2 size)
         {
-            ColorRGB color = cube[new ColorRGB((byte)x, (byte)y, (byte)z)];
-            DrawRectangle(pos.ToRectangle(size), cube[new ColorRGB((byte)x, (byte)y, (byte)z)].ToXNAColor());
+            ColorRGB color = cube[new ColorRGB((byte)(x * 17), (byte)(y * 17), (byte)(z * 17))];
+            DrawRectangle(pos.ToRectangle(size), color.ToXNAColor());
             DrawString(ColorToString(color), pos, GetContrastingColor(color));
         }
 

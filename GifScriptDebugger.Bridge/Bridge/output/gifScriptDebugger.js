@@ -423,7 +423,7 @@ Bridge.assembly("GifScriptDebugger.Bridge", function ($asm, globals) {
         },
         drawString: function (text, position, color) {
             this.context.fillStyle = color.getJavascriptColor();
-            this.context.fillText(text, position.x, position.y);
+            this.context.fillText(text, position.x, ((Bridge.Int.clip32(position.y) + 14) | 0));
         },
         drawRectangle: function (rectangle, color) {
             this.context.fillStyle = color.getJavascriptColor();
@@ -482,8 +482,10 @@ Bridge.assembly("GifScriptDebugger.Bridge", function ($asm, globals) {
             for (var y = 0; y < 16; y = (y + 1) | 0) {
                 this.drawString("" + String.fromCharCode(this.getHexChar(y)), new Microsoft.Xna.Framework.Vector2.$ctor2(pos.x - 16, pos.y + 10 + y * size.y), new Microsoft.Xna.Framework.Color.$ctor6(0, ((y * 16) | 0), 0));
             }
-            this.drawRectangle(GifScriptDebugger.Extensions.toRectangle(pos, Microsoft.Xna.Framework.Vector2.op_Multiply$1(size, 16)), Microsoft.Xna.Framework.Color.getBlack().$clone());
-            this.drawRectangle(GifScriptDebugger.Extensions.toRectangle(new Microsoft.Xna.Framework.Vector2.$ctor2(pos.x + highlightPos.R16 * size.x - 1, pos.y + highlightPos.G16 * size.y - 1), new Microsoft.Xna.Framework.Vector2.$ctor2(size.x + 2, size.y + 2)), Microsoft.Xna.Framework.Color.getWhite().$clone());
+            var size_ = size.$clone();
+            this.drawRectangle(GifScriptDebugger.Extensions.toRectangle(pos, Microsoft.Xna.Framework.Vector2.op_Multiply$1(size_, 16)), Microsoft.Xna.Framework.Color.getBlack().$clone());
+            size_ = size.$clone();
+            this.drawRectangle(GifScriptDebugger.Extensions.toRectangle(new Microsoft.Xna.Framework.Vector2.$ctor2(pos.x + highlightPos.R16 * size_.x - 1, pos.y + highlightPos.G16 * size_.y - 1), new Microsoft.Xna.Framework.Vector2.$ctor2(size_.x + 2, size_.y + 2)), Microsoft.Xna.Framework.Color.getWhite().$clone());
             for (var x1 = 0; x1 < 16; x1 = (x1 + 1) | 0) {
                 for (var y1 = 0; y1 < 16; y1 = (y1 + 1) | 0) {
                     this.drawCell(cube, x1, y1, frame, new Microsoft.Xna.Framework.Vector2.$ctor2(pos.x + x1 * size.x, pos.y + y1 * size.y), new Microsoft.Xna.Framework.Vector2.$ctor2(size.x - 1, size.y - 1));
@@ -518,8 +520,8 @@ Bridge.assembly("GifScriptDebugger.Bridge", function ($asm, globals) {
             this.drawRectangle(new Microsoft.Xna.Framework.Rectangle.$ctor2(Bridge.Int.clip32(pos.x - 8), Bridge.Int.clip32(pos.y + size.y - 8), 16, 16), GifScriptDebugger.Extensions.toXNAColor(color));
         },
         drawCell: function (cube, x, y, z, pos, size) {
-            var color = cube.getItem(new GifScript.ColorRGB.$ctor1((x & 255), (y & 255), (z & 255))).$clone();
-            this.drawRectangle(GifScriptDebugger.Extensions.toRectangle(pos, size.$clone()), GifScriptDebugger.Extensions.toXNAColor(cube.getItem(new GifScript.ColorRGB.$ctor1((x & 255), (y & 255), (z & 255)))));
+            var color = cube.getItem(new GifScript.ColorRGB.$ctor1(((((x * 17) | 0)) & 255), ((((y * 17) | 0)) & 255), ((((z * 17) | 0)) & 255))).$clone();
+            this.drawRectangle(GifScriptDebugger.Extensions.toRectangle(pos, size.$clone()), GifScriptDebugger.Extensions.toXNAColor(color));
             this.drawString(this.colorToString(color.$clone()), pos.$clone(), this.getContrastingColor(color.$clone()).$clone());
         },
         getContrastingColor: function (color) {

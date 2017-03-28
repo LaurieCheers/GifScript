@@ -100,6 +100,8 @@ Bridge.assembly("GifScriptDebugger.Bridge", function ($asm, globals) {
         canvas: null,
         context: null,
         instructionNames: null,
+        taskLoadGifPartA: null,
+        inputSelected: null,
         config: {
             init: function () {
                 this.gifScriptState = new GifScript.GifScriptState();
@@ -130,7 +132,9 @@ Bridge.assembly("GifScriptDebugger.Bridge", function ($asm, globals) {
             //});
             this.canvas.onmousedown = Bridge.fn.bind(this, $asm.$.GifScriptDebugger.Game1.f3);
             this.loadContent();
-            Bridge.global.setInterval(Bridge.fn.cacheBind(this, this.update));
+        },
+        getinput: function () {
+            return document.getElementById("fileInput");
         },
         $main: function () {
             new GifScriptDebugger.Game1();
@@ -143,7 +147,7 @@ Bridge.assembly("GifScriptDebugger.Bridge", function ($asm, globals) {
          * @protected
          * @this GifScriptDebugger.Game1
          * @memberof GifScriptDebugger.Game1
-         * @return  {void}
+         * @return  {System.Threading.Tasks.Task}
          */
         loadContent: function () {
             var $step = 0,
@@ -165,99 +169,110 @@ Bridge.assembly("GifScriptDebugger.Bridge", function ($asm, globals) {
                 $taskResult8, 
                 $task9, 
                 $jumpFromFinally, 
+                $tcs = new System.Threading.Tasks.TaskCompletionSource(), 
+                $returnValue, 
+                $async_e, 
                 $asyncBody = Bridge.fn.bind(this, function () {
-                    for (;;) {
-                        $step = System.Array.min([0,1,2,3,4,5,6,7,8,9], $step);
-                        switch ($step) {
-                            case 0: {
-                                $task1 = this.loadImage("pointer");
-                                    $step = 1;
-                                    $task1.continueWith($asyncBody, true);
-                                    return;
-                            }
-                            case 1: {
-                                $taskResult1 = $task1.getAwaitedResult();
-                                this.pointerTexture = $taskResult1;
-                                    $task2 = this.loadImage("running");
-                                    $step = 2;
-                                    $task2.continueWith($asyncBody, true);
-                                    return;
-                            }
-                            case 2: {
-                                $taskResult2 = $task2.getAwaitedResult();
-                                this.runningTexture = $taskResult2;
-                                    $task3 = this.loadImage("breakpoint");
-                                    $step = 3;
-                                    $task3.continueWith($asyncBody, true);
-                                    return;
-                            }
-                            case 3: {
-                                $taskResult3 = $task3.getAwaitedResult();
-                                this.breakpointTexture = $taskResult3;
-                                    $task4 = this.loadImage("run");
-                                    $step = 4;
-                                    $task4.continueWith($asyncBody, true);
-                                    return;
-                            }
-                            case 4: {
-                                $taskResult4 = $task4.getAwaitedResult();
-                                this.runTexture = $taskResult4;
-                                    $task5 = this.loadImage("stepin");
-                                    $step = 5;
-                                    $task5.continueWith($asyncBody, true);
-                                    return;
-                            }
-                            case 5: {
-                                $taskResult5 = $task5.getAwaitedResult();
-                                this.stepInTexture = $taskResult5;
-                                    $task6 = this.loadImage("stepover");
-                                    $step = 6;
-                                    $task6.continueWith($asyncBody, true);
-                                    return;
-                            }
-                            case 6: {
-                                $taskResult6 = $task6.getAwaitedResult();
-                                this.stepOverTexture = $taskResult6;
-                                    $task7 = this.loadImage("stepout");
-                                    $step = 7;
-                                    $task7.continueWith($asyncBody, true);
-                                    return;
-                            }
-                            case 7: {
-                                $taskResult7 = $task7.getAwaitedResult();
-                                this.stepOutTexture = $taskResult7;
-                                    $task8 = this.loadImage("restart");
-                                    $step = 8;
-                                    $task8.continueWith($asyncBody, true);
-                                    return;
-                            }
-                            case 8: {
-                                $taskResult8 = $task8.getAwaitedResult();
-                                this.restartTexture = $taskResult8;
+                    try {
+                        for (;;) {
+                            $step = System.Array.min([0,1,2,3,4,5,6,7,8,9], $step);
+                            switch ($step) {
+                                case 0: {
+                                    $task1 = this.loadImage("pointer");
+                                        $step = 1;
+                                        $task1.continueWith($asyncBody);
+                                        return;
+                                }
+                                case 1: {
+                                    $taskResult1 = $task1.getAwaitedResult();
+                                    this.pointerTexture = $taskResult1;
+                                        $task2 = this.loadImage("running");
+                                        $step = 2;
+                                        $task2.continueWith($asyncBody);
+                                        return;
+                                }
+                                case 2: {
+                                    $taskResult2 = $task2.getAwaitedResult();
+                                    this.runningTexture = $taskResult2;
+                                        $task3 = this.loadImage("breakpoint");
+                                        $step = 3;
+                                        $task3.continueWith($asyncBody);
+                                        return;
+                                }
+                                case 3: {
+                                    $taskResult3 = $task3.getAwaitedResult();
+                                    this.breakpointTexture = $taskResult3;
+                                        $task4 = this.loadImage("run");
+                                        $step = 4;
+                                        $task4.continueWith($asyncBody);
+                                        return;
+                                }
+                                case 4: {
+                                    $taskResult4 = $task4.getAwaitedResult();
+                                    this.runTexture = $taskResult4;
+                                        $task5 = this.loadImage("stepin");
+                                        $step = 5;
+                                        $task5.continueWith($asyncBody);
+                                        return;
+                                }
+                                case 5: {
+                                    $taskResult5 = $task5.getAwaitedResult();
+                                    this.stepInTexture = $taskResult5;
+                                        $task6 = this.loadImage("stepover");
+                                        $step = 6;
+                                        $task6.continueWith($asyncBody);
+                                        return;
+                                }
+                                case 6: {
+                                    $taskResult6 = $task6.getAwaitedResult();
+                                    this.stepOverTexture = $taskResult6;
+                                        $task7 = this.loadImage("stepout");
+                                        $step = 7;
+                                        $task7.continueWith($asyncBody);
+                                        return;
+                                }
+                                case 7: {
+                                    $taskResult7 = $task7.getAwaitedResult();
+                                    this.stepOutTexture = $taskResult7;
+                                        $task8 = this.loadImage("restart");
+                                        $step = 8;
+                                        $task8.continueWith($asyncBody);
+                                        return;
+                                }
+                                case 8: {
+                                    $taskResult8 = $task8.getAwaitedResult();
+                                    this.restartTexture = $taskResult8;
 
-                                    //ui.Add(new UIButton("Run (F5)", runTexture, new Rectangle(100, 650, 120, 40), defaultButtonStyle, DoRun));
-                                    //ui.Add(new UIButton("Step In (F11)", stepInTexture, new Rectangle(240, 650, 120, 40), defaultButtonStyle, DoStepIn));
-                                    //ui.Add(new UIButton("Step Over (F10)", stepOverTexture, new Rectangle(380, 650, 120, 40), defaultButtonStyle, DoStepOver));
-                                    //ui.Add(new UIButton("Step Out (^F11)", stepOutTexture, new Rectangle(520, 650, 120, 40), defaultButtonStyle, DoStepOut));
-                                    //ui.Add(new UIButton("Restart", restartTexture, new Rectangle(660, 650, 120, 40), defaultButtonStyle, DoRestart));
+                                        //ui.Add(new UIButton("Run (F5)", runTexture, new Rectangle(100, 650, 120, 40), defaultButtonStyle, DoRun));
+                                        //ui.Add(new UIButton("Step In (F11)", stepInTexture, new Rectangle(240, 650, 120, 40), defaultButtonStyle, DoStepIn));
+                                        //ui.Add(new UIButton("Step Over (F10)", stepOverTexture, new Rectangle(380, 650, 120, 40), defaultButtonStyle, DoStepOver));
+                                        //ui.Add(new UIButton("Step Out (^F11)", stepOutTexture, new Rectangle(520, 650, 120, 40), defaultButtonStyle, DoStepOut));
+                                        //ui.Add(new UIButton("Restart", restartTexture, new Rectangle(660, 650, 120, 40), defaultButtonStyle, DoRestart));
 
-                                    $task9 = this.doRestart();
-                                    $step = 9;
-                                    $task9.continueWith($asyncBody, true);
+                                        $task9 = this.doRestart();
+                                        $step = 9;
+                                        $task9.continueWith($asyncBody);
+                                        return;
+                                }
+                                case 9: {
+                                    $task9.getAwaitedResult();
+                                    $tcs.setResult(null);
                                     return;
-                            }
-                            case 9: {
-                                $task9.getAwaitedResult();
-                                return;
-                            }
-                            default: {
-                                return;
+                                }
+                                default: {
+                                    $tcs.setResult(null);
+                                    return;
+                                }
                             }
                         }
+                    } catch($async_e1) {
+                        $async_e = System.Exception.create($async_e1);
+                        $tcs.setException($async_e);
                     }
                 }, arguments);
 
             $asyncBody();
+            return $tcs.task;
         },
         loadImage: function (v) {
             var $step = 0,
@@ -583,10 +598,71 @@ Bridge.assembly("GifScriptDebugger.Bridge", function ($asm, globals) {
             this.drawRectangle(GifScriptDebugger.Extensions.toRectangle(pos, size.$clone()), GifScriptDebugger.Extensions.toXNAColor(color));
             this.drawString(this.getHexString(color.$clone()), pos.$clone(), this.getContrastingColor(color.$clone()).$clone());
         },
+        dataUrl1: function () {
+            var $step = 0,
+                $task1, 
+                $task2, 
+                $taskResult2, 
+                $jumpFromFinally, 
+                $tcs = new System.Threading.Tasks.TaskCompletionSource(), 
+                $returnValue, 
+                file, 
+                reader, 
+                $async_e, 
+                $asyncBody = Bridge.fn.bind(this, function () {
+                    try {
+                        for (;;) {
+                            $step = System.Array.min([0,1,2], $step);
+                            switch ($step) {
+                                case 0: {
+                                    $task1 = this.inputSelected$1();
+                                        $step = 1;
+                                        $task1.continueWith($asyncBody);
+                                        return;
+                                }
+                                case 1: {
+                                    $task1.getAwaitedResult();
+                                    file = this.getinput().files[0];
+                                        reader = new FileReader();
+                                        reader.addEventListener("load", Bridge.fn.bind(this, function () {
+                                            this.gifLoadPart1(reader.result);
+                                        }), false);
+                                        reader.readAsDataURL(file);
+                                        $task2 = ((this.taskLoadGifPartA = new System.Threading.Tasks.TaskCompletionSource())).task;
+                                        $step = 2;
+                                        $task2.continueWith($asyncBody);
+                                        return;
+                                }
+                                case 2: {
+                                    $taskResult2 = $task2.getAwaitedResult();
+                                    $tcs.setResult($taskResult2);
+                                        return;
+                                }
+                                default: {
+                                    $tcs.setResult(null);
+                                    return;
+                                }
+                            }
+                        }
+                    } catch($async_e1) {
+                        $async_e = System.Exception.create($async_e1);
+                        $tcs.setException($async_e);
+                    }
+                }, arguments);
+
+            $asyncBody();
+            return $tcs.task;
+        },
+        inputSelected$1: function () {
+            this.getinput().onchange = Bridge.fn.bind(this, $asm.$.GifScriptDebugger.Game1.f5);
+            return ((this.inputSelected = new System.Threading.Tasks.TaskCompletionSource())).task;
+        },
         doRestart: function () {
             var $step = 0,
                 $task1, 
                 $taskResult1, 
+                $task2, 
+                $taskResult2, 
                 $jumpFromFinally, 
                 $tcs = new System.Threading.Tasks.TaskCompletionSource(), 
                 $returnValue, 
@@ -595,22 +671,30 @@ Bridge.assembly("GifScriptDebugger.Bridge", function ($asm, globals) {
                 $asyncBody = Bridge.fn.bind(this, function () {
                     try {
                         for (;;) {
-                            $step = System.Array.min([0,1], $step);
+                            $step = System.Array.min([0,1,2], $step);
                             switch ($step) {
                                 case 0: {
-                                    $task1 = GifScriptDebugger.Game1.loadGif("colorcube2.gif");
+                                    $task1 = this.dataUrl1();
                                         $step = 1;
                                         $task1.continueWith($asyncBody);
                                         return;
                                 }
                                 case 1: {
                                     $taskResult1 = $task1.getAwaitedResult();
-                                    decoder = $taskResult1;
+                                    $task2 = GifScriptDebugger.Game1.loadGif($taskResult1);
+                                        $step = 2;
+                                        $task2.continueWith($asyncBody);
+                                        return;
+                                }
+                                case 2: {
+                                    $taskResult2 = $task2.getAwaitedResult();
+                                    decoder = $taskResult2;
                                         this.gifScriptState = new GifScript.GifScriptState();
                                         this.gifScriptState.init(new GifScript.GifCube.$ctor1(decoder));
 
                                         this.addInterestingRegister(this.gifScriptState.getrunningRegister().$clone());
                                         this.showRegister(this.gifScriptState.getrunningRegister().$clone());
+                                        Bridge.global.setInterval(Bridge.fn.cacheBind(this, this.update));
                                     $tcs.setResult(null);
                                     return;
                                 }
@@ -628,6 +712,9 @@ Bridge.assembly("GifScriptDebugger.Bridge", function ($asm, globals) {
 
             $asyncBody();
             return $tcs.task;
+        },
+        gifLoadPart1: function (hTMLImageElement) {
+            this.taskLoadGifPartA.setResult(hTMLImageElement);
         }
     });
 
@@ -656,6 +743,9 @@ Bridge.assembly("GifScriptDebugger.Bridge", function ($asm, globals) {
         },
         f4: function (e) {
             this.draw();
+        },
+        f5: function (e) {
+            this.inputSelected.setResult(null);
         }
     });
 

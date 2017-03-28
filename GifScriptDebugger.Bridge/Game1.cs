@@ -78,7 +78,6 @@ namespace GifScriptDebugger
                 mouseDown = true;
             };
             LoadContent();
-            Global.SetInterval(Update);
         }
 
         int frameN = 0;
@@ -92,7 +91,7 @@ namespace GifScriptDebugger
         /// LoadContent will be called once per game and is the place to load
         /// all of your content.
         /// </summary>
-        protected async void LoadContent()
+        protected async Task LoadContent()
         {
             pointerTexture = await LoadImage("pointer");
             runningTexture = await LoadImage("running");
@@ -513,9 +512,30 @@ namespace GifScriptDebugger
             return await task2.Task;
         }
 
+        HTMLInputElement input => Document.GetElementById<HTMLInputElement>("fileInput");
+        TaskCompletionSource<string> taskLoadGifPartA;
+        TaskCompletionSource<object> inputSelected;
+        
+        async Task<string> dataUrl1 ()
+        {
+            await InputSelected();
+            File file = input.Files[0];
+            Node reader = Script.Write<Node>("new FileReader()");
+            reader.AddEventListener(EventType.Load, () =>
+                GifLoadPart1(reader.ToDynamic().result), false);
+            reader.ToDynamic().readAsDataURL(file);
+            return await (taskLoadGifPartA = new TaskCompletionSource<string>()).Task;
+        }
+
+        private Task InputSelected()
+        {
+            input.OnChange = e => inputSelected.SetResult(null);
+            return (inputSelected = new TaskCompletionSource<object>()).Task;
+        }
+
         async Task DoRestart()
         {
-            byte[][][] decoder = await LoadGif("colorcube2.gif");
+            byte[][][] decoder = await LoadGif(await dataUrl1());
             {
                 gifScriptState = new GifScriptState();
                 gifScriptState.Init(new GifCube(decoder));
@@ -523,6 +543,12 @@ namespace GifScriptDebugger
                 AddInterestingRegister(gifScriptState.runningRegister);
                 ShowRegister(gifScriptState.runningRegister);
             }
+            Global.SetInterval(Update);
+        }
+
+        private void GifLoadPart1(string hTMLImageElement)
+        {
+            taskLoadGifPartA.SetResult(hTMLImageElement);
         }
     }
 }

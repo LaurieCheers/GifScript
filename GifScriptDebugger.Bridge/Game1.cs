@@ -168,7 +168,8 @@ namespace GifScriptDebugger
             if (mouseDown)
             {
                 Vector2 mousePos = mousePoint.ToVector2();
-                Vector2 pixelPos = (mousePos - cubeScreenPos) / blockSize;
+                Vector2 mousePos_ = mousePos;
+                Vector2 pixelPos = (mousePos_ - cubeScreenPos) / blockSize;
 
                 if (pixelPos.X >= 0 && pixelPos.X < 16)
                 {

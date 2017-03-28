@@ -328,7 +328,8 @@ Bridge.assembly("GifScriptDebugger.Bridge", function ($asm, globals) {
 
             if (this.mouseDown) {
                 var mousePos = this.mousePoint.toVector2().$clone();
-                var pixelPos = Microsoft.Xna.Framework.Vector2.op_Division((Microsoft.Xna.Framework.Vector2.op_Subtraction(mousePos, this.cubeScreenPos)), this.blockSize);
+                var mousePos_ = mousePos.$clone();
+                var pixelPos = Microsoft.Xna.Framework.Vector2.op_Division((Microsoft.Xna.Framework.Vector2.op_Subtraction(mousePos_, this.cubeScreenPos)), this.blockSize);
 
                 if (pixelPos.x >= 0 && pixelPos.x < 16) {
                     if (pixelPos.y >= 0 && pixelPos.y < 16) {

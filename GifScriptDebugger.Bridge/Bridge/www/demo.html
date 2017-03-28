@@ -11,11 +11,27 @@
     <script src="../output/imageStyler.js"></script>
     <script src="../output/microsoft.xna.framework.js"></script>
     <script src="libgif.js"></script>
+    <style>
+        td
+        {
+            border:1px double #777777;
+        }
+        tr
+        {
+            border:1px double #000000;
+        }
+    </style>
 </head>
-<body onkeydown="GifScriptDebugger.Game1.keyDown(event)" onkeyup="GifScriptDebugger.Game1.keyUp(event)">
+<body onkeydown="GifScriptDebugger.Game1.keyDown(event); return false;" onkeyup="GifScriptDebugger.Game1.keyUp(event); return false;">
     <!-- 
         Right-Click on this file and select "View in Browser"
     -->
     <canvas id="canvas" width="1024" height="720"></canvas>
+    <table>
+        <tr><td>I</td><td>Step In</td></tr>
+        <tr><td>Shift+I</td><td>Step Out</td></tr>
+        <tr><td>F10</td><td>Step Over</td></tr>
+        <tr><td>F5</td><td>Run</td></tr>
+    </table>
 </body>
 </html>

@@ -47,17 +47,29 @@ namespace GifScriptDebugger
         List<int> keyDowns = new List<int>();
         Point mousePoint;
         bool mouseDown = false;
+        static Game1 current;
+
+        static void KeyUp (KeyboardEvent e)
+        {
+            current.keyUps.Add(e.KeyCode);
+        }
+
+        static void KeyDown (KeyboardEvent e)
+        {
+            current.keyDowns.Add(e.KeyCode);
+        }
 
         public Game1()
         {
-            Document.Body.AddEventListener(EventType.KeyUp, e =>
-            {
-                keyUps.Add(e.CharCode);
-            });
-            Document.Body.AddEventListener(EventType.KeyDown, e =>
-            {
-                keyDowns.Add(e.CharCode);
-            });
+            current = this;
+            //canvas.AddEventListener(EventType.KeyUp, e =>
+            //{
+            //    keyUps.Add(e.ToDynamic().charCode);
+            //});
+            //canvas.AddEventListener(EventType.KeyDown, e =>
+            //{
+            //    keyDowns.Add(e.ToDynamic().charCode);
+            //});
             canvas.OnMouseDown = e =>
             {
                 mousePoint = new Point(

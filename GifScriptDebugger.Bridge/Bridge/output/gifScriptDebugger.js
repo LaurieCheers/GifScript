@@ -22,8 +22,15 @@ Bridge.assembly("GifScriptDebugger.Bridge", function ($asm, globals) {
      */
     Bridge.define("GifScriptDebugger.Game1", {
         statics: {
+            current: null,
             task: null,
             task2: null,
+            keyUp: function (e) {
+                GifScriptDebugger.Game1.current.keyUps.add(e.keyCode);
+            },
+            keyDown: function (e) {
+                GifScriptDebugger.Game1.current.keyDowns.add(e.keyCode);
+            },
             imageLoaded: function (image) {
                 GifScriptDebugger.Game1.task.setResult(image);
             },
@@ -112,9 +119,16 @@ Bridge.assembly("GifScriptDebugger.Bridge", function ($asm, globals) {
         },
         ctor: function () {
             this.$initialize();
-            document.body.onkeyup = Bridge.fn.bind(this, $asm.$.GifScriptDebugger.Game1.f3);
-            document.body.onkeydown = Bridge.fn.bind(this, $asm.$.GifScriptDebugger.Game1.f4);
-            this.canvas.onmousedown = Bridge.fn.bind(this, $asm.$.GifScriptDebugger.Game1.f5);
+            GifScriptDebugger.Game1.current = this;
+            //canvas.AddEventListener(EventType.KeyUp, e =>
+            //{
+            //    keyUps.Add(e.ToDynamic().charCode);
+            //});
+            //canvas.AddEventListener(EventType.KeyDown, e =>
+            //{
+            //    keyDowns.Add(e.ToDynamic().charCode);
+            //});
+            this.canvas.onmousedown = Bridge.fn.bind(this, $asm.$.GifScriptDebugger.Game1.f3);
             this.loadContent();
             Bridge.global.setInterval(Bridge.fn.cacheBind(this, this.update));
         },
@@ -470,7 +484,7 @@ Bridge.assembly("GifScriptDebugger.Bridge", function ($asm, globals) {
 
                 registerDrawPos.y += this.registersScreenSpacing;
             }
-            Bridge.global.requestAnimationFrame(Bridge.fn.bind(this, $asm.$.GifScriptDebugger.Game1.f6));
+            Bridge.global.requestAnimationFrame(Bridge.fn.bind(this, $asm.$.GifScriptDebugger.Game1.f4));
         },
         drawCube: function (cube, frame, highlightPos, pos, size) {
             var $t, $t1;
@@ -620,16 +634,10 @@ Bridge.assembly("GifScriptDebugger.Bridge", function ($asm, globals) {
             return _o1;
         },
         f3: function (e) {
-            this.keyUps.add(e.charCode);
-        },
-        f4: function (e) {
-            this.keyDowns.add(e.charCode);
-        },
-        f5: function (e) {
             this.mousePoint = new Microsoft.Xna.Framework.Point.$ctor2(e.layerX, e.layerY);
             this.mouseDown = true;
         },
-        f6: function (e) {
+        f4: function (e) {
             this.draw();
         }
     });

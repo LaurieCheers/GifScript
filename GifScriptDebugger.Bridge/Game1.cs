@@ -109,7 +109,7 @@ namespace GifScriptDebugger
             //ui.Add(new UIButton("Step Out (^F11)", stepOutTexture, new Rectangle(520, 650, 120, 40), defaultButtonStyle, DoStepOut));
             //ui.Add(new UIButton("Restart", restartTexture, new Rectangle(660, 650, 120, 40), defaultButtonStyle, DoRestart));
 
-            DoRestart();
+            await DoRestart();
         }
 
         static void ImageLoaded (Texture2D image)
@@ -220,8 +220,7 @@ namespace GifScriptDebugger
             mouseDown = false;
             keyDowns.Clear();
             keyUps.Clear();
-            if (frameN++ == 100)
-                Draw();
+            Draw();
         }
 
         void DoStepIn()
@@ -514,7 +513,7 @@ namespace GifScriptDebugger
             return await task2.Task;
         }
 
-        async void DoRestart()
+        async Task DoRestart()
         {
             byte[][][] decoder = await LoadGif("colorcube2.gif");
             {

@@ -163,10 +163,11 @@ Bridge.assembly("GifScriptDebugger.Bridge", function ($asm, globals) {
                 $taskResult7, 
                 $task8, 
                 $taskResult8, 
+                $task9, 
                 $jumpFromFinally, 
                 $asyncBody = Bridge.fn.bind(this, function () {
                     for (;;) {
-                        $step = System.Array.min([0,1,2,3,4,5,6,7,8], $step);
+                        $step = System.Array.min([0,1,2,3,4,5,6,7,8,9], $step);
                         switch ($step) {
                             case 0: {
                                 $task1 = this.loadImage("pointer");
@@ -240,7 +241,13 @@ Bridge.assembly("GifScriptDebugger.Bridge", function ($asm, globals) {
                                     //ui.Add(new UIButton("Step Out (^F11)", stepOutTexture, new Rectangle(520, 650, 120, 40), defaultButtonStyle, DoStepOut));
                                     //ui.Add(new UIButton("Restart", restartTexture, new Rectangle(660, 650, 120, 40), defaultButtonStyle, DoRestart));
 
-                                    this.doRestart();
+                                    $task9 = this.doRestart();
+                                    $step = 9;
+                                    $task9.continueWith($asyncBody, true);
+                                    return;
+                            }
+                            case 9: {
+                                $task9.getAwaitedResult();
                                 return;
                             }
                             default: {
@@ -369,9 +376,7 @@ Bridge.assembly("GifScriptDebugger.Bridge", function ($asm, globals) {
             this.mouseDown = false;
             this.keyDowns.clear();
             this.keyUps.clear();
-            if (Bridge.identity(this.frameN, (this.frameN = (this.frameN + 1) | 0)) === 100) {
-                this.draw();
-            }
+            this.draw();
         },
         doStepIn: function () {
             this.gifScriptState.tick();
@@ -583,35 +588,46 @@ Bridge.assembly("GifScriptDebugger.Bridge", function ($asm, globals) {
                 $task1, 
                 $taskResult1, 
                 $jumpFromFinally, 
+                $tcs = new System.Threading.Tasks.TaskCompletionSource(), 
+                $returnValue, 
                 decoder, 
+                $async_e, 
                 $asyncBody = Bridge.fn.bind(this, function () {
-                    for (;;) {
-                        $step = System.Array.min([0,1], $step);
-                        switch ($step) {
-                            case 0: {
-                                $task1 = GifScriptDebugger.Game1.loadGif("colorcube2.gif");
-                                    $step = 1;
-                                    $task1.continueWith($asyncBody, true);
-                                    return;
-                            }
-                            case 1: {
-                                $taskResult1 = $task1.getAwaitedResult();
-                                decoder = $taskResult1;
-                                    this.gifScriptState = new GifScript.GifScriptState();
-                                    this.gifScriptState.init(new GifScript.GifCube.$ctor1(decoder));
+                    try {
+                        for (;;) {
+                            $step = System.Array.min([0,1], $step);
+                            switch ($step) {
+                                case 0: {
+                                    $task1 = GifScriptDebugger.Game1.loadGif("colorcube2.gif");
+                                        $step = 1;
+                                        $task1.continueWith($asyncBody);
+                                        return;
+                                }
+                                case 1: {
+                                    $taskResult1 = $task1.getAwaitedResult();
+                                    decoder = $taskResult1;
+                                        this.gifScriptState = new GifScript.GifScriptState();
+                                        this.gifScriptState.init(new GifScript.GifCube.$ctor1(decoder));
 
-                                    this.addInterestingRegister(this.gifScriptState.getrunningRegister().$clone());
-                                    this.showRegister(this.gifScriptState.getrunningRegister().$clone());
-                                return;
-                            }
-                            default: {
-                                return;
+                                        this.addInterestingRegister(this.gifScriptState.getrunningRegister().$clone());
+                                        this.showRegister(this.gifScriptState.getrunningRegister().$clone());
+                                    $tcs.setResult(null);
+                                    return;
+                                }
+                                default: {
+                                    $tcs.setResult(null);
+                                    return;
+                                }
                             }
                         }
+                    } catch($async_e1) {
+                        $async_e = System.Exception.create($async_e1);
+                        $tcs.setException($async_e);
                     }
                 }, arguments);
 
             $asyncBody();
+            return $tcs.task;
         }
     });
 

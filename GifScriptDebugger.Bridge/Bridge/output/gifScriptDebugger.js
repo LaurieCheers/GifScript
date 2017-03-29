@@ -99,6 +99,7 @@ Bridge.assembly("GifScriptDebugger.Bridge", function ($asm, globals) {
         interestingRegisters: null,
         canvas: null,
         context: null,
+        needsRedraw: true,
         instructionNames: null,
         taskLoadGifPartA: null,
         inputSelected: null,
@@ -363,6 +364,7 @@ Bridge.assembly("GifScriptDebugger.Bridge", function ($asm, globals) {
                             if (Bridge.referenceEquals(currentBreakpoint.cube, this.showingCube) && GifScript.ColorRGB.op_Equality(currentBreakpoint.position, breakpointPos)) {
                                 this.breakpoints.removeAt(Idx);
                                 removed = true;
+                                this.needsRedraw = true;
                                 break;
                             }
                         }
@@ -372,9 +374,11 @@ Bridge.assembly("GifScriptDebugger.Bridge", function ($asm, globals) {
                             newBreakpoint.cube = this.showingCube;
                             newBreakpoint.position = breakpointPos.$clone();
                             this.breakpoints.add(newBreakpoint);
+                            this.needsRedraw = true;
                         }
                     } else if (Bridge.Int.clip32(pixelPos.y) === 16) {
                         this.showingPosition = new GifScript.ColorRGB.$ctor1(this.showingPosition.r, this.showingPosition.g, ((((Bridge.Int.clip32(pixelPos.x) * 17) | 0)) & 255));
+                        this.needsRedraw = true;
                     }
                 } else {
                     var registerPos = (Microsoft.Xna.Framework.Vector2.op_Subtraction(mousePos, this.registersScreenPos));
@@ -439,6 +443,8 @@ Bridge.assembly("GifScriptDebugger.Bridge", function ($asm, globals) {
             return false;
         },
         updateToScriptState: function () {
+            this.needsRedraw = true;
+
             this.addInterestingRegister(this.gifScriptState.getrunningRegister().$clone());
             if (Bridge.is(this.gifScriptState.getcurrent(), GifScript.GifCursor)) {
                 this.addInterestingRegister(Bridge.cast(this.gifScriptState.getcurrent(), GifScript.GifCursor).register.$clone());
@@ -449,6 +455,7 @@ Bridge.assembly("GifScriptDebugger.Bridge", function ($asm, globals) {
         showRegister: function (register) {
             this.showingCube = this.gifScriptState.getRegisterTarget(register.$clone());
             this.showingPosition = this.gifScriptState.getRegisterPosition(register.$clone()).$clone();
+            this.needsRedraw = true;
         },
         addInterestingRegister: function (register) {
             if (!this.interestingRegistersSet.contains(register.$clone())) {
@@ -475,6 +482,12 @@ Bridge.assembly("GifScriptDebugger.Bridge", function ($asm, globals) {
          */
         draw: function () {
             var $t;
+            if (!this.needsRedraw) {
+                return;
+            }
+
+            this.needsRedraw = false;
+
             this.context = this.canvas.getContext("2d");
             this.context.font = "9px arial";
             this.drawRectangle(new Microsoft.Xna.Framework.Rectangle.$ctor2(0, 0, 1024, 720), new Microsoft.Xna.Framework.Color.$ctor6(94, 54, 54));

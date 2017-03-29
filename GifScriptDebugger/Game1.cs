@@ -473,7 +473,7 @@ namespace GifScriptDebugger
         void DoRestart()
         {
             NGif.GifDecoder decoder = new NGif.GifDecoder();
-            if (decoder.Read("../../../../../Examples/rainbow.gif") == 0)
+            if (decoder.Read("../../../../../Examples/colorcube2.gif") == 0)
             {
                 gifScriptState = new GifScriptState();
                 gifScriptState.Init(new GifCube(decoder));

@@ -184,6 +184,7 @@ namespace GifScriptDebugger
                             {
                                 breakpoints.RemoveAt(Idx);
                                 removed = true;
+                                needsRedraw = true;
                                 break;
                             }
                         }
@@ -194,11 +195,13 @@ namespace GifScriptDebugger
                             newBreakpoint.cube = showingCube;
                             newBreakpoint.position = breakpointPos;
                             breakpoints.Add(newBreakpoint);
+                            needsRedraw = true;
                         }
                     }
                     else if(((int)pixelPos.Y) == 16)
                     {
                         showingPosition = new ColorRGB(showingPosition.R, showingPosition.G, (byte)((int)pixelPos.X * 17));
+                        needsRedraw = true;
                     }
                 }
                 else
@@ -281,6 +284,8 @@ namespace GifScriptDebugger
 
         void UpdateToScriptState()
         {
+            needsRedraw = true;
+
             AddInterestingRegister(gifScriptState.runningRegister);
             if (gifScriptState.current is GifCursor)
             {
@@ -301,6 +306,7 @@ namespace GifScriptDebugger
         {
             showingCube = gifScriptState.GetRegisterTarget(register);
             showingPosition = gifScriptState.GetRegisterPosition(register);
+            needsRedraw = true;
         }
 
         HashSet<ColorRGB> interestingRegistersSet = new HashSet<ColorRGB>();
@@ -331,12 +337,19 @@ namespace GifScriptDebugger
 
         public CanvasRenderingContext2D context;
 
+        bool needsRedraw = true;
+
         /// <summary>
         /// This is called when the game should draw itself.
         /// </summary>
         /// <param name="gameTime">Provides a snapshot of timing values.</param>
         protected void Draw()
         {
+            if (!needsRedraw)
+                return;
+
+            needsRedraw = false;
+
             context = canvas.GetContext(CanvasTypes.CanvasContext2DType.CanvasRenderingContext2D);
             context.Font = "9px arial";
             DrawRectangle(new Rectangle(0, 0, 1024, 720), new Color(94, 54, 54));

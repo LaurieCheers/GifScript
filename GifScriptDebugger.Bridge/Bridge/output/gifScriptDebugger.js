@@ -77,6 +77,9 @@ Bridge.assembly("GifScriptDebugger.Bridge", function ($asm, globals) {
 
                 $asyncBody();
                 return $tcs.task;
+            },
+            inputSelected_Finished: function (file) {
+                GifScriptDebugger.Game1.current.inputSelected.setResult(file);
             }
         },
         pointerTexture: null,
@@ -601,6 +604,7 @@ Bridge.assembly("GifScriptDebugger.Bridge", function ($asm, globals) {
         dataUrl1: function () {
             var $step = 0,
                 $task1, 
+                $taskResult1, 
                 $task2, 
                 $taskResult2, 
                 $jumpFromFinally, 
@@ -621,8 +625,10 @@ Bridge.assembly("GifScriptDebugger.Bridge", function ($asm, globals) {
                                         return;
                                 }
                                 case 1: {
-                                    $task1.getAwaitedResult();
-                                    file = this.getinput().files[0];
+                                    $taskResult1 = $task1.getAwaitedResult();
+                                    file = $taskResult1;
+                                        document.getElementById("content").style.display = "block";
+                                        document.getElementById("dropZone").style.display = "none";
                                         reader = new FileReader();
                                         reader.addEventListener("load", Bridge.fn.bind(this, function () {
                                             this.gifLoadPart1(reader.result);
@@ -654,7 +660,6 @@ Bridge.assembly("GifScriptDebugger.Bridge", function ($asm, globals) {
             return $tcs.task;
         },
         inputSelected$1: function () {
-            this.getinput().onchange = Bridge.fn.bind(this, $asm.$.GifScriptDebugger.Game1.f5);
             return ((this.inputSelected = new System.Threading.Tasks.TaskCompletionSource())).task;
         },
         doRestart: function () {
@@ -743,9 +748,6 @@ Bridge.assembly("GifScriptDebugger.Bridge", function ($asm, globals) {
         },
         f4: function (e) {
             this.draw();
-        },
-        f5: function (e) {
-            this.inputSelected.setResult(null);
         }
     });
 

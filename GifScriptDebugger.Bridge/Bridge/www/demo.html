@@ -20,19 +20,82 @@
         {
             border:1px double #000000;
         }
+        #content
+        {
+            display:none;
+        }
+        div#dropZone {
+            background: gray;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 999;
+            opacity: 0.6;
+            visibility: hidden;
+        }
     </style>
+    <script>
+
+        function showDropZone() {
+            dropZone.style.visibility = "visible";
+        }
+        function hideDropZone() {
+            dropZone.style.visibility = "hidden";
+        }
+
+        function allowDrag(e) {
+            if (true) {  // Test that the item being dragged is a valid one
+                e.dataTransfer.dropEffect = 'copy';
+                e.preventDefault();
+            }
+        }
+
+        function handleDrop(e) {
+            e.stopPropagation();
+            e.preventDefault();
+            hideDropZone();
+
+            var file = e.dataTransfer.files[0];
+            GifScriptDebugger.Game1.inputSelected_Finished(file);
+        }
+
+        window.onload = function () {
+            var dropZone = document.getElementById('dropZone');
+
+            // 1
+            window.addEventListener('dragenter', function (e) {
+                showDropZone();
+            });
+
+            // 2
+            dropZone.addEventListener('dragenter', allowDrag);
+            dropZone.addEventListener('dragover', allowDrag);
+
+            // 3
+            dropZone.addEventListener('dragleave', function (e) {
+                hideDropZone();
+            });
+
+            // 4
+            dropZone.addEventListener('drop', handleDrop);
+        }
+    </script>
 </head>
 <body onkeydown="GifScriptDebugger.Game1.keyDown(event); return false;" onkeyup="GifScriptDebugger.Game1.keyUp(event); return false;">
+    <div id="dropZone"></div>
     <!-- 
         Right-Click on this file and select "View in Browser"
     -->
-    <canvas id="canvas" width="1024" height="720"></canvas>
-    <input type="file" id="fileInput" />
-    <table>
-        <tr><td>I</td><td>Step In</td></tr>
-        <tr><td>Shift+I</td><td>Step Out</td></tr>
-        <tr><td>F10</td><td>Step Over</td></tr>
-        <tr><td>F5</td><td>Run</td></tr>
-    </table>
+    <div id="content">
+        <canvas id="canvas" width="1024" height="720"></canvas>
+        <table>
+            <tr><td>I</td><td>Step In</td></tr>
+            <tr><td>Shift+I</td><td>Step Out</td></tr>
+            <tr><td>F10</td><td>Step Over</td></tr>
+            <tr><td>F5</td><td>Run</td></tr>
+        </table>
+    </div>
 </body>
 </html>

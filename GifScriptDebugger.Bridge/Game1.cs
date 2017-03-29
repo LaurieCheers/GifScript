@@ -514,12 +514,13 @@ namespace GifScriptDebugger
 
         HTMLInputElement input => Document.GetElementById<HTMLInputElement>("fileInput");
         TaskCompletionSource<string> taskLoadGifPartA;
-        TaskCompletionSource<object> inputSelected;
+        TaskCompletionSource<File> inputSelected;
         
         async Task<string> dataUrl1 ()
         {
-            await InputSelected();
-            File file = input.Files[0];
+            File file = await InputSelected();
+            Document.GetElementById("content").Style.Display = Display.Block;
+            Document.GetElementById("dropZone").Style.Display = Display.None;
             Node reader = Script.Write<Node>("new FileReader()");
             reader.AddEventListener(EventType.Load, () =>
                 GifLoadPart1(reader.ToDynamic().result), false);
@@ -527,11 +528,12 @@ namespace GifScriptDebugger
             return await (taskLoadGifPartA = new TaskCompletionSource<string>()).Task;
         }
 
-        private Task InputSelected()
+        static void InputSelected_Finished (File file)
         {
-            input.OnChange = e => inputSelected.SetResult(null);
-            return (inputSelected = new TaskCompletionSource<object>()).Task;
+            current.inputSelected.SetResult(file);
         }
+
+        private Task<File> InputSelected() => (inputSelected = new TaskCompletionSource<File>()).Task;
 
         async Task DoRestart()
         {

@@ -118,10 +118,10 @@ If you don't want to fail on overflow, show an example of the overflow behaviour
 
 Hopefully this shows you the kinds of operations that are possible with modifiers. To be precise, the system understands the following operations, and will try out each of these rules, in this order, for each channel until it finds one that fits the examples it has been given.
 
-**None**	The same value as before.
-**Channel**	The (old) value from another channel.
-**Constant**	Set to a specific value.
-**Invert**	255 minus the old value.
-**Add**	Increase (or decrease) by a constant; fail if the value overflows.
-**Wrap Add**	Increase (or decrease) by a constant; wrap around if the value overflows.
-**Overflow**	Increase or decrease by a constant when another (specific) channel's Wrap Add or Overflow channel overflows.
+* **None**	The same value as before.
+* **Channel**	The (old) value from another channel.
+* **Constant**	Set to a specific value.
+* **Invert**	255 minus the old value.
+* **Add**	Increase (or decrease) by a constant; fail if the value overflows.
+* **Wrap Add**	Increase (or decrease) by a constant; wrap around if the value overflows.
+* **Overflow**	Increase or decrease by a constant when another (specific) channel's Wrap Add or Overflow channel overflows.

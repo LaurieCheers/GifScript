@@ -1,7 +1,7 @@
 # GifScript
 GifScript is a simple esoteric programming language by Laurie and Michael Cheers. 
 ## A Note on Pronunciation
-As all right-minded people know, the G in GIF should be pronounced Spanish-style, as a voiceless uvular fricative. (like the J in Jalapeno).
+As all right-minded people know, the G in GIF should be pronounced Spanish-style, like the J in Jalapeno.
 ## Data Types
 GifScript has two data types: colors, and color cubes.
 

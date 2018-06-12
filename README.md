@@ -25,7 +25,7 @@ One thing worth noting - at any given moment, one of the registers is the "runni
 ## Worked Example
 Before we get into the technical specifications, it's probably helpful to work through a simple example  to see how GifScript code hangs together.
 
-
+![](https://raw.githubusercontent.com/LaurieCheers/GifScript/master/gifscript_example0.png)
 
 A natural way to read GifScript code is to consider it as individual blocks separated by Return instructions. So for example, the line above contains three blocks. Let's read the first block.
 
@@ -43,6 +43,7 @@ PS: Why are we using register #884400? No particular reason, except that it's a 
 ## Instructions
 GifScript understands the following 10 special instruction colors:
 
+![](https://raw.githubusercontent.com/LaurieCheers/GifScript/master/gifscript_instructions2.png)
 
 ### Return (#000000)
 Return the current color from the current function. If we're not currently in a function, terminate.
@@ -104,9 +105,13 @@ You might have noticed that GifScript has no instructions for supporting basic m
 
 ### Example 1:
 
+![](https://raw.githubusercontent.com/LaurieCheers/GifScript/master/gifscript_example1.png)
+
 Here we see a simple add modifier, which will add 32 points to the blue channel at each step. If this overflows the blue channel, the modifier fails. (In other words, acts like a Return instruction - this can be a useful building block for logic.)
 
 ### Example 2:
+
+![](https://raw.githubusercontent.com/LaurieCheers/GifScript/master/gifscript_example2.png)
 
 If you don't want to fail on overflow, show an example of the overflow behaviour you want. In this case we're overflowing into the (full) green channel, which in turn overflows into the red channel. NB: For GifScript to understand your intent, the first two example colors should illustrate an addition that does not overflow, and the third should illustrate the overflow.
 

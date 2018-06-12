@@ -29,11 +29,12 @@ Before we get into the technical specifications, it's probably helpful to work t
 
 A natural way to read GifScript code is to consider it as individual blocks separated by Return instructions. So for example, the line above contains three blocks. Let's read the first block.
 
-Reading from left to right, the first color we encounter is #888833. This color has no special meaning - all it means is that we record this color as the current color.
-The second color is #CCCCCC, the Assign instruction. Nothing happens just yet, but next time we see a return statement, we're going to assign something to have the color #888833.
-The third color is #884400. Again, this has no special meaning, so we just make #884400 the current color.
-Next we encounter #0000CC, the Register-Position instruction. The current color is #884400, so this means we'll get the position of register #884400. That position becomes the current color.
-And finally we see #000000, the Return instruction. The Assign we had queued up can now resolve, so we set the position of register #884400. It now points to the pixel at #888833 within its color cube - namely, in the middle (88 along and 88 down) of its fourth frame (33).
+* Reading from left to right, the first color we encounter is #888833. This color has no special meaning - all it means is that we record this color as the current color.
+* The second color is #CCCCCC, the Assign instruction. Nothing happens just yet, but next time we see a return statement, we're going to assign something to have the color #888833.
+* The third color is #884400. Again, this has no special meaning, so we just make #884400 the current color.
+* Next we encounter #0000CC, the Register-Position instruction. The current color is #884400, so this means we'll get the position of register #884400. That position becomes the current color.
+* And finally we see #000000, the Return instruction. The Assign we had queued up can now resolve, so we set the position of register #884400. It now points to the pixel at #888833 within its color cube - namely, in the middle (88 along and 88 down) of its fourth frame (33).
+
 The second block proceeds in a similar way, except that instead of using the Register-Position instruction, it uses Register-Value, and instead of the color #888833, it uses #EE77CC. So whereas the first block changed which pixel the register pointed to, this block sets the color of that pixel. Specifically, it makes it the color #EE77CC, a rather nice pink.
 
 In the final block, there are just two instructions. We set the current color to #884400, and then save the color cube of register #884400 as a GIF file. Hence, if you run this program, you should find that it creates a file named "884400.gif", with one pink pixel in the middle of one of its frames: 

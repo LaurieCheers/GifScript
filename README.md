@@ -44,48 +44,59 @@ PS: Why are we using register #884400? No particular reason, except that it's a 
 GifScript understands the following 10 special instruction colors:
 
 
-Return (#000000)
+### Return (#000000)
 Return the current color from the current function. If we're not currently in a function, terminate.
+
 NB: All the instructions below that "evaluate the right-hand side" do so by executing the right-hand side like a function. In other words, it will run the right-hand side code until it hits a "return" instruction, then go back to evaluate the instruction that was expecting a right-hand side value, and then resume execution after that return instruction.
 
 ### Assign (#CCCCCC)
 `right-hand-side.pixel = current-color`
+
 Evaluate the right-hand side. Write the current color into that pixel's contents. (If that pixel is not assignable, return instead).
 
 ### Call (#CC88CC)
 `right-hand-side.register.call()`
+
 Evaluate the right-hand side. That register becomes the running register. (Until it returns). The current color is unaffected.
 
 ### Load (#CC0044)
 `current-color.register.load(current-color.register.filename)`
+
 Load a gif into the selected register. The filename will be determined by the register's color: for example register #FF4400 loads "ff4400.gif".
 
 ### Save (#CC8844)
 `current-color.register.save(current-color.register.filename)`
+
 Save the selected register as a gif, using the same filename as for loading.
 
 ### Retarget (#CCCC44)
 `right-hand-side.register.cube = current-color.register.cube`
+
 Evaluate the right-hand side. Make that register point to the current-color register's color cube.
 
 ### RegisterPos (#0000CC)
 `current-color = current-color.register.position`
+
 Get the position of the selected register. (Assigning to this value will move the register.)
 
 ### RegisterVal (#0088CC)
 `current color = current-color.register.pixel`
+
 Get the color pointed to by the selected register. (Assigning to this value will modify the register's color cube.)
 
 ### Data (#00CCCC)
 `current-color = running-register.cube[current-color]`
+
 Get the selected pixel from the running program. (Assigning to this value will modify the program.)
 
 ### Modify (#CC00CC)
 `current-color = modify(current-color)`
+
 Deduce a pattern from the next 3 pixels, and apply that pattern to current-color. (See Modifiers.) If the pattern can't be deduced or the result overflows, return instead. Resume execution after those pixels. (The resultant value is not assignable.)
 
 ### Other
 `current-color = this-pixel`
+
 If the interpreter reads any color other than the 12 above, it simply records that pixel as the current color. (Assigning to this value will modify the program.)
 
 ## Modifiers

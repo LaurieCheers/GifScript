@@ -25,7 +25,7 @@ One thing worth noting - at any given moment, one of the registers is the "runni
 ## Worked Example
 Before we get into the technical specifications, it's probably helpful to work through a simple example  to see how GifScript code hangs together. Here's the program:
 
-![](https://raw.githubusercontent.com/LaurieCheers/GifScript/master/Examples/docexample.png)
+![](https://raw.githubusercontent.com/LaurieCheers/GifScript/master/Examples/docexample.gif)
 
 Or if we zoom in a little -
 
@@ -43,7 +43,7 @@ The second block proceeds in a similar way, except that instead of using the Reg
 
 In the final block, there are just two instructions. We set the current color to #884400, and then save the color cube of register #884400 as a GIF file. Hence, if you run this program, you should find that it creates a file named "884400.gif", with one pink pixel in the middle of one of its frames: 
 
-![](https://raw.githubusercontent.com/LaurieCheers/GifScript/master/Examples/docexample_out.png)
+![](https://raw.githubusercontent.com/LaurieCheers/GifScript/master/Examples/docexample_out.gif)
 
 PS: Why are we using register #884400? No particular reason, except that it's a nice color that's not easily mistaken for any of the instruction colors.
 

@@ -23,7 +23,11 @@ Aside from the program itself, the interpreter maintains two important pieces of
 One thing worth noting - at any given moment, one of the registers is the "running" register, and it points to the pixel that the interpreter will read next. By default, that's register #FFFFFF. When GifScript starts, register #FFFFFF points to the program cube, and setting its position changes what instruction is be executed next. (in other words, this is a "Goto".)
 
 ## Worked Example
-Before we get into the technical specifications, it's probably helpful to work through a simple example  to see how GifScript code hangs together.
+Before we get into the technical specifications, it's probably helpful to work through a simple example  to see how GifScript code hangs together. Here's the program:
+
+![](https://raw.githubusercontent.com/LaurieCheers/GifScript/master/Examples/docexample.png)
+
+Or if we zoom in a little -
 
 ![](https://raw.githubusercontent.com/LaurieCheers/GifScript/master/gifscript_example0.png)
 
@@ -38,6 +42,8 @@ A natural way to read GifScript code is to consider it as individual blocks sepa
 The second block proceeds in a similar way, except that instead of using the Register-Position instruction, it uses Register-Value, and instead of the color #888833, it uses #EE77CC. So whereas the first block changed which pixel the register pointed to, this block sets the color of that pixel. Specifically, it makes it the color #EE77CC, a rather nice pink.
 
 In the final block, there are just two instructions. We set the current color to #884400, and then save the color cube of register #884400 as a GIF file. Hence, if you run this program, you should find that it creates a file named "884400.gif", with one pink pixel in the middle of one of its frames: 
+
+![](https://raw.githubusercontent.com/LaurieCheers/GifScript/master/Examples/docexample_out.png)
 
 PS: Why are we using register #884400? No particular reason, except that it's a nice color that's not easily mistaken for any of the instruction colors.
 
